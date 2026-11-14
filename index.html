@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TryFreed — Cada salário com propósito</title>
+<meta name="description" content="TryFreed splits every paycheck between bills, goals and money that is yours, and shows how much you can spend today. In English and Portuguese.">
+<link rel="canonical" href="https://tryfreed.com/">
+<link rel="icon" type="image/svg+xml" href="/brand/of/favicon-of-32.svg">
+<link rel="apple-touch-icon" href="/brand/of/apple-touch-of-180.png">
+<meta name="theme-color" content="#F7FAFF" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#060B1F" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TryFreed">
+<meta property="og:url" content="https://tryfreed.com/">
+<meta property="og:title" content="TryFreed — Every paycheck with purpose">
+<meta property="og:description" content="Bills, goals and money that is yours, split automatically, and one number for how much you can spend today.">
+<meta property="og:image" content="https://tryfreed.com/og-image-of.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TryFreed — Every paycheck with purpose">
+<meta name="twitter:description" content="Bills, goals and money that is yours, split automatically, and one number for how much you can spend today.">
+<meta name="twitter:image" content="https://tryfreed.com/og-image-of.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: página clara, cartões suaves, Fredy (robô Orbit Fold) como guia; uma ação azul por tela. */
+:root{
+  --bg:#F7FAFF; --sheet:#FFFFFF; --ink:#060B1F; --ink-2:#52627A; --line:#DAE4F3;
+  --action:#0A3BFF; --on-action:#FFFFFF; --action-soft:#EAF2FF;
+  --sky:#2563FF; --sky-bg:#EAF2FF; --sun:#FFB400; --sun-bg:#FFF0C2; --deep:#060B1F; --deep-bg:#EAF2FF; --on-deep:#FFFFFF; --pink:#FF4FA3;
+  --aur1:#D6E2FF; --aur2:#D3F4FF; --aur3:#EAF2FF; --shadow:0 22px 50px -26px rgba(6,11,31,.35);
+  --font:"Plus Jakarta Sans","Avenir Next","Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#060B1F; --sheet:#0B1B3B; --ink:#FFFFFF; --ink-2:#A9BAD7; --line:#24365C;
+  --action:#2563FF; --on-action:#FFFFFF; --action-soft:#12244A;
+  --sky:#6E9BFF; --sky-bg:#12244A; --sun:#FFC53D; --sun-bg:#3D3416; --deep:#A9BAD7; --deep-bg:#12244A; --on-deep:#060B1F; --pink:#FF6BB3;
+  --aur1:#12305F; --aur2:#0E3A55; --aur3:#12244A; --shadow:0 22px 50px -26px rgba(0,0,0,.8); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#060B1F; --sheet:#0B1B3B; --ink:#FFFFFF; --ink-2:#A9BAD7; --line:#24365C;
+  --action:#2563FF; --on-action:#FFFFFF; --action-soft:#12244A;
+  --sky:#6E9BFF; --sky-bg:#12244A; --sun:#FFC53D; --sun-bg:#3D3416; --deep:#A9BAD7; --deep-bg:#12244A; --on-deep:#060B1F; --pink:#FF6BB3;
+  --aur1:#12305F; --aur2:#0E3A55; --aur3:#12244A; --shadow:0 22px 50px -26px rgba(0,0,0,.8); color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--font);margin:0;overflow-x:hidden}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font);margin:0;letter-spacing:-0.02em;text-wrap:balance;font-weight:800}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:10px}
+.num{font-variant-numeric:tabular-nums}
+.fredy{display:block}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;border-radius:999px;font:800 16px/1 var(--font);text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .2s ease, box-shadow .2s ease}
+.btn-primary{background:var(--action);color:var(--on-action);box-shadow:0 8px 0 -2px color-mix(in srgb,var(--action) 70%,#000 30%),0 18px 30px -14px var(--action)}
+.btn-primary:hover{transform:translateY(-2px)}
+.btn-outline{border-color:var(--ink);color:var(--ink);background:transparent}
+.btn-link{color:var(--ink);font:800 16px var(--font);text-decoration:none;padding:12px 10px}
+.legend{font-size:13px;color:var(--ink-2)}
+
+/* nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:21;background:var(--bg)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;font:800 26px/1 var(--font);letter-spacing:-0.03em;color:var(--ink)}
+.logo .fredy{width:40px;height:40px}
+.nav-r{display:flex;gap:8px;align-items:center}
+
+/* hero */
+.hero{position:relative;overflow:hidden;padding-block:52px 40px}
+.aurora{position:absolute;inset:-20% -10% auto;height:120%;pointer-events:none;z-index:0;filter:blur(64px);opacity:.9}
+.aurora i{position:absolute;border-radius:50%;animation:drift 18s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:46vw;height:46vw;left:4%;top:0;background:var(--aur1)}
+.aurora i:nth-child(2){width:38vw;height:38vw;right:4%;top:10%;background:var(--aur2);animation-duration:22s}
+.aurora i:nth-child(3){width:30vw;height:30vw;left:38%;top:40%;background:var(--aur3);animation-duration:26s}
+@keyframes drift{to{transform:translate3d(4vw,3vw,0) scale(1.12)}}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:40px;align-items:center}
+.hero h1{font-size:clamp(46px,7.2vw,90px);line-height:.98}
+.rot{display:block;color:var(--action);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.8,.2,1)}
+.rot.out{opacity:0;transform:translateY(-18px)}
+.rot.pre{opacity:0;transform:translateY(18px);transition:none}
+.hero .lede{margin-top:22px;font-size:clamp(18px,2vw,21px);color:var(--ink-2);max-width:46ch;font-weight:600}
+.hero-cta{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.hero-trust{margin-top:22px;display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--ink-2);font-weight:700}
+.hero-trust span{display:inline-flex;gap:7px;align-items:center}
+
+/* flow tree */
+.flow{position:relative;height:540px}
+.flow svg.lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.flow path.ln{fill:none;stroke:var(--sheet);stroke-width:5;stroke-linecap:round;stroke-dasharray:600;stroke-dashoffset:600;animation:draw 1.4s .4s cubic-bezier(.6,0,.2,1) forwards;filter:drop-shadow(0 2px 6px rgba(6,11,31,.18))}
+.flow path.ln:nth-child(2){animation-delay:.6s}.flow path.ln:nth-child(3){animation-delay:.8s}.flow path.ln:nth-child(4){animation-delay:1s}
+@keyframes draw{to{stroke-dashoffset:0}}
+.node{position:absolute;background:var(--sheet);border-radius:22px;box-shadow:var(--shadow);padding:12px 14px;width:240px;display:grid;gap:8px;animation:pop .7s cubic-bezier(.2,.9,.3,1.3) both}
+.node h4{margin:0;font:800 15px var(--font);display:flex;align-items:center;gap:8px}
+.node h4 svg{color:var(--ink-2)}
+.bar{position:relative;height:30px;border-radius:10px;background:var(--line);overflow:hidden;display:flex;align-items:center;justify-content:space-between;padding:0 10px;font:800 12px var(--font);color:var(--ink)}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:10px;transform-origin:left;animation:fill 1.2s cubic-bezier(.2,.8,.2,1) both}
+.bar span,.bar em{position:relative;font-style:normal}
+.bar em{background:var(--sheet);color:var(--ink);border-radius:7px;padding:2px 7px;font-size:11px}
+.sub{font-size:12px;font-weight:700;color:var(--ink-2)}
+@keyframes fill{from{transform:scaleX(0)}}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.96)}}
+.n-in{left:50%;top:0;transform:translateX(-50%);width:220px}
+.n-in .bar{background:var(--sun-bg)}
+.n-b{left:44%;top:140px;animation-delay:.9s}.n-s{left:44%;top:262px;animation-delay:1.05s}.n-g{left:44%;top:366px;animation-delay:1.2s}
+.n-b .bar i{background:var(--sky)}.n-s .bar i{background:var(--sun)}.n-g .bar i{background:var(--deep)}
+.n-g .bar span{color:var(--on-deep)}
+.tag{position:absolute;left:4%;font:800 12px var(--font);background:var(--sheet);border-radius:10px;padding:5px 10px;box-shadow:var(--shadow);color:var(--ink-2);animation:pop .6s both}
+.t1{top:205px;animation-delay:.8s}.t2{top:400px;animation-delay:1.1s}
+.today-chip{position:absolute;right:0;top:44px;background:var(--ink);color:var(--bg);border-radius:22px;padding:14px 18px;box-shadow:var(--shadow);animation:pop .7s 1.5s both}
+.today-chip small{display:block;font-size:12px;font-weight:700;opacity:.8}
+.today-chip strong{font:800 36px/1 var(--font)}
+.hero-fredy{position:absolute;right:150px;top:-6px;width:108px;animation:pop .7s 1.7s both, bob 5s 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-4deg)}}
+.flow .legend{position:absolute;left:0;bottom:0}
+
+/* sections */
+section{padding-block:96px}
+.head{max-width:60ch;display:grid;gap:14px;margin-bottom:44px}
+.head h2{font-size:clamp(36px,5vw,60px);line-height:1.02}
+.head p{color:var(--ink-2);font-size:19px;font-weight:600}
+.head-row{display:flex;align-items:center;gap:16px}
+
+/* scrolly */
+.scrolly{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:60px}
+.rail{position:relative;padding-left:28px}
+.rail::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px;background:var(--line)}
+.rail-fill{position:absolute;left:0;top:0;width:4px;border-radius:4px;background:var(--action);height:var(--p,0%);transition:height .15s linear}
+.step{min-height:78vh;display:flex;flex-direction:column;justify-content:center;gap:14px;opacity:.35;transition:opacity .4s}
+.step.on{opacity:1}
+.step h3{font-size:clamp(30px,3.6vw,46px);line-height:1.05}
+.step p{color:var(--ink-2);font-size:18px;max-width:46ch;font-weight:600}
+.step .k{font:800 14px var(--font);color:var(--sky)}
+.step .mini{display:none}
+.phone-col{position:relative}
+.phone{position:sticky;top:calc(50vh - 300px);width:300px;height:600px;margin-left:auto;margin-right:auto;border-radius:48px;background:var(--ink);padding:12px;box-shadow:var(--shadow)}
+.screen{position:relative;width:100%;height:100%;border-radius:38px;background:var(--bg);overflow:hidden}
+.scr{position:absolute;inset:0;padding:26px 18px;display:grid;align-content:start;gap:14px;opacity:0;transform:translateY(20px) scale(.98);transition:opacity .5s,transform .6s cubic-bezier(.2,.8,.2,1)}
+.scr.on{opacity:1;transform:none}
+.scr .title{font:800 22px/1.1 var(--font);text-align:center}
+.today-card{background:var(--sheet);border-radius:26px;padding:18px;display:grid;justify-items:center;gap:4px;box-shadow:var(--shadow)}
+.today-card .fredy{width:96px}
+.today-card small{font:700 12px var(--font);color:var(--ink-2)}
+.today-card strong{font:800 54px/1 var(--font)}
+.row{display:flex;justify-content:space-between;align-items:center;background:var(--sheet);border-radius:16px;padding:11px 13px;font-size:14px;font-weight:700}
+.pay{font:800 12px var(--font);background:var(--action-soft);color:var(--ink);border-radius:999px;padding:5px 12px}
+.cols{display:flex;align-items:flex-end;gap:10px;height:220px;padding:0 6px}
+.col{flex:1;border-radius:16px;display:flex;flex-direction:column;justify-content:space-between;padding:10px 6px;text-align:center;font:800 12px var(--font);transform-origin:bottom}
+.scr.on .col{animation:grow .9s cubic-bezier(.2,.8,.2,1) both}
+.scr.on .col:nth-child(2){animation-delay:.12s}.scr.on .col:nth-child(3){animation-delay:.24s}
+@keyframes grow{from{transform:scaleY(.1)}}
+.col span{font:800 15px var(--font)}
+.c-b{height:100%;background:var(--sky-bg)}.c-s{height:66%;background:var(--sun-bg)}.c-g{height:32%;background:var(--deep-bg)}
+.chart{background:var(--sheet);border-radius:18px;padding:12px}
+.chart svg{width:100%;height:120px;display:block}
+.chart path.l{fill:none;stroke:var(--sky);stroke-width:4;stroke-linecap:round;stroke-dasharray:400;stroke-dashoffset:400}
+.scr.on .chart path.l{animation:draw 1.6s .2s ease forwards}
+.chart path.a{fill:var(--sky-bg)}
+.goal{display:flex;justify-content:space-between;font-size:13px;font-weight:700;background:var(--sheet);border-radius:14px;padding:10px 12px}
+.goal b{color:var(--ink)}
+.title-f{display:flex;align-items:center;justify-content:center;gap:8px}
+.title-f .fredy{width:34px}
+
+/* fredy chat */
+.fredy-sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:56px;align-items:center}
+.chat{background:var(--sheet);border-radius:30px;padding:22px;display:grid;gap:12px;box-shadow:var(--shadow);min-height:380px;align-content:start}
+.msg{max-width:86%;padding:12px 16px;border-radius:20px;font-size:15px;line-height:1.45;font-weight:600;opacity:0;transform:translateY(10px)}
+.msg.show{opacity:1;transform:none;transition:opacity .4s,transform .4s}
+.me{justify-self:end;background:var(--deep);color:var(--on-deep);border-bottom-right-radius:6px}
+.botrow{display:flex;gap:8px;align-items:flex-end;justify-self:start;max-width:92%}
+.botrow .fredy{width:34px;flex-shrink:0}
+.bot{background:var(--bg);border-bottom-left-radius:6px;max-width:100%}
+.typing{display:none;gap:5px;padding:14px 16px;background:var(--bg);border-radius:20px}
+.typing.show{display:flex}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--ink-2);animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{50%{transform:translateY(-4px);opacity:.4}}
+.acts{display:flex;gap:8px;margin-top:10px}
+.chip{font:800 13px var(--font);border-radius:999px;padding:6px 12px;border:2px solid var(--line);background:var(--sheet);color:var(--ink)}
+.chip-ok{background:var(--sun);border-color:var(--sun);color:#060B1F}
+.ways{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.way{display:inline-flex;gap:8px;align-items:center;font-weight:800;font-size:15px;background:var(--sheet);border:2px solid var(--line);border-radius:999px;padding:9px 15px}
+.way svg{color:var(--sky)}
+
+/* tiles */
+.tilt-stage{perspective:1400px}
+.tilt{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;transform:rotateX(12deg) rotateZ(-5deg);transform-style:preserve-3d}
+.tile{background:var(--sheet);border-radius:26px;padding:22px;box-shadow:var(--shadow);display:grid;gap:10px;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.tile:hover{transform:translateZ(30px)}
+.tile .ic{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;color:var(--ink)}
+.tile h3{font-size:21px;font-weight:800}
+.tile p{color:var(--ink-2);font-size:15px;font-weight:600}
+.soon-line{margin-top:28px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:15px;color:var(--ink-2);font-weight:600}
+.soon{font:800 12px var(--font);color:var(--ink);background:var(--sun-bg);border-radius:999px;padding:3px 10px}
+
+/* why */
+.why{display:grid;grid-template-columns:auto minmax(0,1fr);gap:36px;align-items:center;background:var(--sheet);border-radius:36px;padding:44px;box-shadow:var(--shadow)}
+.why .fredy{width:150px}
+.why h2{font-size:clamp(32px,4.4vw,52px);line-height:1.04;margin-bottom:16px}
+.why p{font-size:19px;color:var(--ink-2);font-weight:600;max-width:58ch;margin-top:8px}
+.why blockquote{margin:22px 0 0;padding-left:16px;border-left:4px solid var(--sun);font-size:15px;color:var(--ink-2);font-style:italic}
+.why blockquote cite{display:block;font-style:normal;font-weight:800;margin-top:4px}
+
+/* pricing */
+.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;max-width:860px}
+.price{background:var(--sheet);border-radius:28px;padding:30px;display:grid;gap:12px;box-shadow:var(--shadow);border:2px solid var(--line)}
+.price.best{border-color:var(--ink)}
+.price h3{font-size:20px}
+.amt{font:800 56px/1 var(--font);letter-spacing:-0.03em}
+.amt small{font:700 17px var(--font);color:var(--ink-2);letter-spacing:0}
+.price p{color:var(--ink-2);font-size:15px;font-weight:600}
+.price .renew{font-size:13px}
+.guarantee{margin-top:22px;color:var(--ink-2);font-size:15px;font-weight:600;max-width:70ch}
+
+/* faq */
+.faq{display:grid;gap:10px;max-width:860px}
+details{background:var(--sheet);border:2px solid var(--line);border-radius:20px;padding:18px 22px}
+summary{cursor:pointer;list-style:none;font:800 18px var(--font);display:flex;justify-content:space-between;gap:16px}
+summary::after{content:"+";color:var(--action);font-weight:800}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:var(--ink-2);font-size:16px;font-weight:600}
+
+/* closing */
+.closing{position:relative;overflow:hidden;border-radius:40px;padding:64px 44px;background:var(--deep);color:var(--on-deep);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:22px 36px;align-items:center;margin-block:20px 48px}
+.closing .aurora{opacity:.35}
+.closing > *{position:relative;z-index:1}
+.closing h2{font-size:clamp(36px,5.4vw,64px);line-height:1}
+.closing p{opacity:.85;max-width:50ch;margin-top:14px;font-weight:600}
+.closing .btn{margin-top:22px}
+.closing .fredy{width:170px;animation:bob 5s ease-in-out infinite}
+footer{padding-block:28px 52px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;font-size:14px;color:var(--ink-2);border-top:1px solid var(--line)}
+footer p{max-width:70ch}
+footer nav{display:flex;gap:18px;flex-wrap:wrap}
+
+.rv{transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.js .rv:not(.in){opacity:.25;transform:translateY(28px)}
+
+@media (max-width:900px){
+  .hero .wrap,.scrolly,.fredy-sec{grid-template-columns:minmax(0,1fr)}
+  .flow{height:auto;max-width:420px;width:100%;margin:0 auto;display:grid;gap:12px}
+  .flow svg.lines,.tag,.hero-fredy{display:none}
+  .node,.today-chip,.flow .legend{position:static;transform:none;width:auto}
+  .today-chip{order:-1;justify-self:start}
+  .phone-col{display:none}
+  .step{min-height:auto;opacity:1;padding-block:28px}
+  .step .mini{display:block;margin-top:10px}
+  .step .mini .phone{position:relative;top:0;width:260px;height:520px}
+  .step .mini .scr{opacity:1;transform:none}
+  .tilt{grid-template-columns:minmax(0,1fr);transform:none}
+  .why{grid-template-columns:minmax(0,1fr);padding:28px}
+  .why .fredy{width:110px}
+  .prices{grid-template-columns:minmax(0,1fr)}
+  .nav .btn-link{padding:12px 6px;font-size:15px}
+  .nav .btn-outline{padding:10px 14px;font-size:15px}
+  .logo{font-size:21px;gap:6px}
+  .logo .fredy{width:32px;height:32px}
+  section{padding-block:64px}
+  .closing{grid-template-columns:minmax(0,1fr);padding:44px 24px}
+  .closing .fredy{width:120px;order:-1}
+}
+@media (max-width:440px){.nav .btn-outline{display:none}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .flow path.ln{stroke-dashoffset:0}.js .rv:not(.in){opacity:1;transform:none}.msg{opacity:1;transform:none}
+}
+.logo img{display:block;height:36px;width:auto}
+@media (max-width:900px){.logo img{height:30px}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}.nav .lang-btn{display:inline-flex;align-items:center;min-height:44px;padding:12px 6px;background:none;border:0;cursor:pointer}</style>
+<script>
+var TF_WORDS={"pt": ["com propósito.", "em dia.", "sem culpa.", "em paz."], "en": ["with purpose.", "on track.", "guilt-free.", "at peace."]};
+var TF_LANG=(function(){var s=null;try{s=localStorage.getItem('lang')}catch(e){}
+  if(s==='pt'||s==='en')return s;
+  var n=((navigator.languages&&navigator.languages[0])||navigator.language||'').toLowerCase();
+  return n.indexOf('pt')===0?'pt':'en';})();
+document.documentElement.lang=TF_LANG==='en'?'en':'pt-BR';
+</script>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- Fredy robô Orbit Fold: gerado por tools/rebrand/site_rebrand.py de brand/of/fredy-of-*.svg -->
+    <linearGradient id="fr-w" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E1E9F5"/></linearGradient>
+<linearGradient id="fr-s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D5DFEE"/><stop offset="1" stop-color="#9FB0C9"/></linearGradient>
+<linearGradient id="fr-arm" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F4F7FC"/><stop offset="1" stop-color="#CBD6E8"/></linearGradient>
+<linearGradient id="fr-v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E1632"/><stop offset="1" stop-color="#03050F"/></linearGradient>
+<linearGradient id="fr-flap" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563FF"/><stop offset="1" stop-color="#21D4FF"/></linearGradient>
+<linearGradient id="fr-ga" gradientUnits="userSpaceOnUse" x1="22" y1="95" x2="98" y2="22"><stop offset="0" stop-color="#0A3BFF"/><stop offset="1" stop-color="#2563FF"/></linearGradient>
+<linearGradient id="fr-gb" gradientUnits="userSpaceOnUse" x1="100" y1="40" x2="28" y2="98"><stop offset="0" stop-color="#2583FF"/><stop offset="1" stop-color="#21D4FF"/></linearGradient>
+    <symbol id="fredy-wink" viewBox="-26 -24 252 238"><rect x="68" y="188" width="28" height="16" rx="6" fill="url(#fr-s)"/><rect x="104" y="188" width="28" height="16" rx="6" fill="url(#fr-s)"/>
+<rect x="88" y="104" width="24" height="12" rx="4" fill="url(#fr-s)"/>
+<path d="M72 112H128Q142 112 142 126L135 176Q134 190 120 190H80Q66 190 65 176L58 126Q58 112 72 112Z" fill="url(#fr-w)" stroke="#B9C6DC" stroke-width="1.5"/>
+<rect x="76" y="174" width="48" height="4" rx="2" fill="url(#fr-s)"/>
+<rect x="84" y="128" width="32" height="32" rx="9" fill="#0B1B3B"/>
+<g transform="translate(85.2 129.2) scale(.25)"><path fill="url(#fr-gb)" d="M96.17 26.66C96.97 27.58 99.62 30.19 100.96 32.22C102.3 34.24 103.41 36.5 104.22 38.79C105.03 41.08 105.56 43.53 105.82 45.95C106.08 48.37 106.07 50.87 105.78 53.3C105.5 55.74 104.9 58.19 104.1 60.53C103.3 62.88 102.22 65.19 100.98 67.37C99.74 69.56 98.26 71.67 96.66 73.64C95.05 75.62 93.25 77.5 91.35 79.23C89.46 80.96 87.4 82.58 85.29 84.04C83.17 85.5 80.93 86.83 78.67 87.99C76.41 89.16 74.05 90.17 71.72 91.03C69.38 91.88 66.98 92.57 64.64 93.11C62.29 93.64 59.93 94 57.64 94.21C55.36 94.42 53.09 94.46 50.94 94.36C48.78 94.25 46.67 93.98 44.7 93.58C42.72 93.18 40.83 92.62 39.08 91.95C37.33 91.28 35.69 90.47 34.18 89.56C32.67 88.65 30.72 86.99 30.03 86.48A1.25 1.25 0 0 0 31.71 84.63C32.34 85.05 34.1 86.48 35.49 87.14C36.89 87.81 38.45 88.31 40.05 88.62C41.66 88.94 43.39 89.07 45.14 89.03C46.88 88.99 48.71 88.76 50.52 88.38C52.33 88 54.19 87.44 56 86.75C57.81 86.05 59.63 85.19 61.38 84.22C63.13 83.25 64.86 82.13 66.5 80.93C68.13 79.73 69.72 78.4 71.18 77.02C72.65 75.64 74.04 74.15 75.3 72.65C76.56 71.15 77.72 69.58 78.73 68.03C79.75 66.48 80.65 64.89 81.41 63.36C82.17 61.83 82.79 60.29 83.3 58.85C83.8 57.41 84.16 56.01 84.44 54.72C84.71 53.43 84.85 52.23 84.94 51.13C85.02 50.03 85.02 49.04 84.93 48.14C84.84 47.24 84.65 46.45 84.41 45.73C84.16 45.02 83.85 44.41 83.46 43.82C83.08 43.24 82.32 42.5 82.09 42.24A10.5 10.5 0 0 1 96.17 26.66Z"/><path fill="url(#fr-ga)" d="M30.03 86.48C29.45 85.84 27.57 84.03 26.55 82.62C25.54 81.22 24.64 79.69 23.92 78.03C23.21 76.38 22.63 74.6 22.25 72.72C21.87 70.85 21.66 68.84 21.65 66.78C21.65 64.72 21.83 62.55 22.22 60.37C22.6 58.19 23.2 55.93 23.98 53.7C24.77 51.48 25.76 49.21 26.93 47.02C28.1 44.82 29.47 42.62 31 40.53C32.52 38.44 34.24 36.39 36.09 34.48C37.94 32.58 39.96 30.74 42.08 29.09C44.21 27.43 46.48 25.89 48.82 24.55C51.16 23.22 53.63 22.03 56.13 21.08C58.63 20.13 61.23 19.35 63.81 18.85C66.39 18.34 69.04 18.07 71.62 18.04C74.2 18.02 76.8 18.23 79.3 18.68C81.8 19.13 84.28 19.81 86.61 20.75C88.93 21.69 91.21 22.89 93.25 24.33C95.29 25.77 97.22 27.5 98.84 29.4C100.46 31.3 101.87 33.48 102.96 35.73C104.04 37.98 104.95 41.69 105.35 42.88L84.77 47.06C84.64 46.68 84.35 45.49 84.03 44.82C83.71 44.15 83.34 43.58 82.86 43.03C82.39 42.48 81.86 41.98 81.18 41.51C80.51 41.05 79.73 40.6 78.81 40.25C77.89 39.89 76.82 39.56 75.64 39.36C74.46 39.16 73.13 39.05 71.72 39.04C70.3 39.03 68.77 39.12 67.17 39.31C65.58 39.49 63.87 39.75 62.14 40.13C60.41 40.51 58.6 41 56.8 41.6C55 42.2 53.15 42.92 51.35 43.74C49.55 44.57 47.74 45.51 46.01 46.54C44.28 47.57 42.58 48.72 40.99 49.94C39.4 51.16 37.87 52.48 36.49 53.86C35.1 55.23 33.81 56.69 32.68 58.18C31.56 59.67 30.55 61.23 29.73 62.79C28.91 64.35 28.24 65.97 27.77 67.56C27.3 69.14 27 70.76 26.92 72.32C26.83 73.88 26.94 75.45 27.27 76.92C27.59 78.38 28.13 79.82 28.87 81.11C29.61 82.39 31.23 84.04 31.71 84.63A1.25 1.25 0 0 1 30.03 86.48Z"/></g><g transform="translate(58 130) rotate(10)"><rect x="-7" y="-4" width="14" height="38" rx="7" fill="url(#fr-arm)" stroke="#B9C6DC" stroke-width="1.5"/><rect x="-8.5" y="30" width="17" height="14" rx="6" fill="url(#fr-s)" stroke="#9FB0C9" stroke-width="1.5"/></g><g transform="translate(142 130) rotate(-10)"><rect x="-7" y="-4" width="14" height="38" rx="7" fill="url(#fr-arm)" stroke="#B9C6DC" stroke-width="1.5"/><rect x="-8.5" y="30" width="17" height="14" rx="6" fill="url(#fr-s)" stroke="#9FB0C9" stroke-width="1.5"/></g>
+<g transform="rotate(0 100 124)"><rect x="96" y="0" width="8" height="18" rx="4" fill="url(#fr-s)"/>
+<g transform="translate(81.4 -24.5) scale(.3)"><path fill="url(#fr-gb)" d="M96.17 26.66C96.97 27.58 99.62 30.19 100.96 32.22C102.3 34.24 103.41 36.5 104.22 38.79C105.03 41.08 105.56 43.53 105.82 45.95C106.08 48.37 106.07 50.87 105.78 53.3C105.5 55.74 104.9 58.19 104.1 60.53C103.3 62.88 102.22 65.19 100.98 67.37C99.74 69.56 98.26 71.67 96.66 73.64C95.05 75.62 93.25 77.5 91.35 79.23C89.46 80.96 87.4 82.58 85.29 84.04C83.17 85.5 80.93 86.83 78.67 87.99C76.41 89.16 74.05 90.17 71.72 91.03C69.38 91.88 66.98 92.57 64.64 93.11C62.29 93.64 59.93 94 57.64 94.21C55.36 94.42 53.09 94.46 50.94 94.36C48.78 94.25 46.67 93.98 44.7 93.58C42.72 93.18 40.83 92.62 39.08 91.95C37.33 91.28 35.69 90.47 34.18 89.56C32.67 88.65 30.72 86.99 30.03 86.48A1.25 1.25 0 0 0 31.71 84.63C32.34 85.05 34.1 86.48 35.49 87.14C36.89 87.81 38.45 88.31 40.05 88.62C41.66 88.94 43.39 89.07 45.14 89.03C46.88 88.99 48.71 88.76 50.52 88.38C52.33 88 54.19 87.44 56 86.75C57.81 86.05 59.63 85.19 61.38 84.22C63.13 83.25 64.86 82.13 66.5 80.93C68.13 79.73 69.72 78.4 71.18 77.02C72.65 75.64 74.04 74.15 75.3 72.65C76.56 71.15 77.72 69.58 78.73 68.03C79.75 66.48 80.65 64.89 81.41 63.36C82.17 61.83 82.79 60.29 83.3 58.85C83.8 57.41 84.16 56.01 84.44 54.72C84.71 53.43 84.85 52.23 84.94 51.13C85.02 50.03 85.02 49.04 84.93 48.14C84.84 47.24 84.65 46.45 84.41 45.73C84.16 45.02 83.85 44.41 83.46 43.82C83.08 43.24 82.32 42.5 82.09 42.24A10.5 10.5 0 0 1 96.17 26.66Z"/><path fill="url(#fr-ga)" d="M30.03 86.48C29.45 85.84 27.57 84.03 26.55 82.62C25.54 81.22 24.64 79.69 23.92 78.03C23.21 76.38 22.63 74.6 22.25 72.72C21.87 70.85 21.66 68.84 21.65 66.78C21.65 64.72 21.83 62.55 22.22 60.37C22.6 58.19 23.2 55.93 23.98 53.7C24.77 51.48 25.76 49.21 26.93 47.02C28.1 44.82 29.47 42.62 31 40.53C32.52 38.44 34.24 36.39 36.09 34.48C37.94 32.58 39.96 30.74 42.08 29.09C44.21 27.43 46.48 25.89 48.82 24.55C51.16 23.22 53.63 22.03 56.13 21.08C58.63 20.13 61.23 19.35 63.81 18.85C66.39 18.34 69.04 18.07 71.62 18.04C74.2 18.02 76.8 18.23 79.3 18.68C81.8 19.13 84.28 19.81 86.61 20.75C88.93 21.69 91.21 22.89 93.25 24.33C95.29 25.77 97.22 27.5 98.84 29.4C100.46 31.3 101.87 33.48 102.96 35.73C104.04 37.98 104.95 41.69 105.35 42.88L84.77 47.06C84.64 46.68 84.35 45.49 84.03 44.82C83.71 44.15 83.34 43.58 82.86 43.03C82.39 42.48 81.86 41.98 81.18 41.51C80.51 41.05 79.73 40.6 78.81 40.25C77.89 39.89 76.82 39.56 75.64 39.36C74.46 39.16 73.13 39.05 71.72 39.04C70.3 39.03 68.77 39.12 67.17 39.31C65.58 39.49 63.87 39.75 62.14 40.13C60.41 40.51 58.6 41 56.8 41.6C55 42.2 53.15 42.92 51.35 43.74C49.55 44.57 47.74 45.51 46.01 46.54C44.28 47.57 42.58 48.72 40.99 49.94C39.4 51.16 37.87 52.48 36.49 53.86C35.1 55.23 33.81 56.69 32.68 58.18C31.56 59.67 30.55 61.23 29.73 62.79C28.91 64.35 28.24 65.97 27.77 67.56C27.3 69.14 27 70.76 26.92 72.32C26.83 73.88 26.94 75.45 27.27 76.92C27.59 78.38 28.13 79.82 28.87 81.11C29.61 82.39 31.23 84.04 31.71 84.63A1.25 1.25 0 0 1 30.03 86.48Z"/></g>
+<rect x="26" y="16" width="148" height="98" rx="30" fill="url(#fr-w)" stroke="#B9C6DC" stroke-width="1.5"/>
+<path d="M64 30H136Q160 30 160 54V80L138 100H64Q40 100 40 76V54Q40 30 64 30Z" fill="url(#fr-v)"/>
+<path d="M160 80L138 100H160Z" fill="url(#fr-flap)"/><g class="eyes"><circle cx="80" cy="64" r="12" fill="#21D4FF" fill-opacity=".12"/><circle cx="80" cy="64" r="8" fill="#21D4FF"/><circle cx="82.8" cy="61.2" r="2.08" fill="#FFFFFF"/><circle cx="120" cy="64" r="12" fill="#21D4FF" fill-opacity=".12"/><circle cx="120" cy="64" r="8" fill="#21D4FF"/><circle cx="122.8" cy="61.2" r="2.08" fill="#FFFFFF"/></g></g></symbol>
+    <symbol id="fredy-love" viewBox="-26 -24 252 238"><rect x="68" y="188" width="28" height="16" rx="6" fill="url(#fr-s)"/><rect x="104" y="188" width="28" height="16" rx="6" fill="url(#fr-s)"/>
+<rect x="88" y="104" width="24" height="12" rx="4" fill="url(#fr-s)"/>
+<path d="M72 112H128Q142 112 142 126L135 176Q134 190 120 190H80Q66 190 65 176L58 126Q58 112 72 112Z" fill="url(#fr-w)" stroke="#B9C6DC" stroke-width="1.5"/>
+<rect x="76" y="174" width="48" height="4" rx="2" fill="url(#fr-s)"/>
+<rect x="84" y="128" width="32" height="32" rx="9" fill="#0B1B3B"/>
+<g transform="translate(85.2 129.2) scale(.25)"><path fill="url(#fr-gb)" d="M96.17 26.66C96.97 27.58 99.62 30.19 100.96 32.22C102.3 34.24 103.41 36.5 104.22 38.79C105.03 41.08 105.56 43.53 105.82 45.95C106.08 48.37 106.07 50.87 105.78 53.3C105.5 55.74 104.9 58.19 104.1 60.53C103.3 62.88 102.22 65.19 100.98 67.37C99.74 69.56 98.26 71.67 96.66 73.64C95.05 75.62 93.25 77.5 91.35 79.23C89.46 80.96 87.4 82.58 85.29 84.04C83.17 85.5 80.93 86.83 78.67 87.99C76.41 89.16 74.05 90.17 71.72 91.03C69.38 91.88 66.98 92.57 64.64 93.11C62.29 93.64 59.93 94 57.64 94.21C55.36 94.42 53.09 94.46 50.94 94.36C48.78 94.25 46.67 93.98 44.7 93.58C42.72 93.18 40.83 92.62 39.08 91.95C37.33 91.28 35.69 90.47 34.18 89.56C32.67 88.65 30.72 86.99 30.03 86.48A1.25 1.25 0 0 0 31.71 84.63C32.34 85.05 34.1 86.48 35.49 87.14C36.89 87.81 38.45 88.31 40.05 88.62C41.66 88.94 43.39 89.07 45.14 89.03C46.88 88.99 48.71 88.76 50.52 88.38C52.33 88 54.19 87.44 56 86.75C57.81 86.05 59.63 85.19 61.38 84.22C63.13 83.25 64.86 82.13 66.5 80.93C68.13 79.73 69.72 78.4 71.18 77.02C72.65 75.64 74.04 74.15 75.3 72.65C76.56 71.15 77.72 69.58 78.73 68.03C79.75 66.48 80.65 64.89 81.41 63.36C82.17 61.83 82.79 60.29 83.3 58.85C83.8 57.41 84.16 56.01 84.44 54.72C84.71 53.43 84.85 52.23 84.94 51.13C85.02 50.03 85.02 49.04 84.93 48.14C84.84 47.24 84.65 46.45 84.41 45.73C84.16 45.02 83.85 44.41 83.46 43.82C83.08 43.24 82.32 42.5 82.09 42.24A10.5 10.5 0 0 1 96.17 26.66Z"/><path fill="url(#fr-ga)" d="M30.03 86.48C29.45 85.84 27.57 84.03 26.55 82.62C25.54 81.22 24.64 79.69 23.92 78.03C23.21 76.38 22.63 74.6 22.25 72.72C21.87 70.85 21.66 68.84 21.65 66.78C21.65 64.72 21.83 62.55 22.22 60.37C22.6 58.19 23.2 55.93 23.98 53.7C24.77 51.48 25.76 49.21 26.93 47.02C28.1 44.82 29.47 42.62 31 40.53C32.52 38.44 34.24 36.39 36.09 34.48C37.94 32.58 39.96 30.74 42.08 29.09C44.21 27.43 46.48 25.89 48.82 24.55C51.16 23.22 53.63 22.03 56.13 21.08C58.63 20.13 61.23 19.35 63.81 18.85C66.39 18.34 69.04 18.07 71.62 18.04C74.2 18.02 76.8 18.23 79.3 18.68C81.8 19.13 84.28 19.81 86.61 20.75C88.93 21.69 91.21 22.89 93.25 24.33C95.29 25.77 97.22 27.5 98.84 29.4C100.46 31.3 101.87 33.48 102.96 35.73C104.04 37.98 104.95 41.69 105.35 42.88L84.77 47.06C84.64 46.68 84.35 45.49 84.03 44.82C83.71 44.15 83.34 43.58 82.86 43.03C82.39 42.48 81.86 41.98 81.18 41.51C80.51 41.05 79.73 40.6 78.81 40.25C77.89 39.89 76.82 39.56 75.64 39.36C74.46 39.16 73.13 39.05 71.72 39.04C70.3 39.03 68.77 39.12 67.17 39.31C65.58 39.49 63.87 39.75 62.14 40.13C60.41 40.51 58.6 41 56.8 41.6C55 42.2 53.15 42.92 51.35 43.74C49.55 44.57 47.74 45.51 46.01 46.54C44.28 47.57 42.58 48.72 40.99 49.94C39.4 51.16 37.87 52.48 36.49 53.86C35.1 55.23 33.81 56.69 32.68 58.18C31.56 59.67 30.55 61.23 29.73 62.79C28.91 64.35 28.24 65.97 27.77 67.56C27.3 69.14 27 70.76 26.92 72.32C26.83 73.88 26.94 75.45 27.27 76.92C27.59 78.38 28.13 79.82 28.87 81.11C29.61 82.39 31.23 84.04 31.71 84.63A1.25 1.25 0 0 1 30.03 86.48Z"/></g><g transform="translate(58 130) rotate(26)"><rect x="-7" y="-4" width="14" height="38" rx="7" fill="url(#fr-arm)" stroke="#B9C6DC" stroke-width="1.5"/><rect x="-8.5" y="30" width="17" height="14" rx="6" fill="url(#fr-s)" stroke="#9FB0C9" stroke-width="1.5"/></g><g transform="translate(142 130) rotate(-26)"><rect x="-7" y="-4" width="14" height="38" rx="7" fill="url(#fr-arm)" stroke="#B9C6DC" stroke-width="1.5"/><rect x="-8.5" y="30" width="17" height="14" rx="6" fill="url(#fr-s)" stroke="#9FB0C9" stroke-width="1.5"/></g>
+<g transform="rotate(-3 100 124)"><rect x="96" y="0" width="8" height="18" rx="4" fill="url(#fr-s)"/>
+<g transform="translate(81.4 -24.5) scale(.3)"><path fill="url(#fr-gb)" d="M96.17 26.66C96.97 27.58 99.62 30.19 100.96 32.22C102.3 34.24 103.41 36.5 104.22 38.79C105.03 41.08 105.56 43.53 105.82 45.95C106.08 48.37 106.07 50.87 105.78 53.3C105.5 55.74 104.9 58.19 104.1 60.53C103.3 62.88 102.22 65.19 100.98 67.37C99.74 69.56 98.26 71.67 96.66 73.64C95.05 75.62 93.25 77.5 91.35 79.23C89.46 80.96 87.4 82.58 85.29 84.04C83.17 85.5 80.93 86.83 78.67 87.99C76.41 89.16 74.05 90.17 71.72 91.03C69.38 91.88 66.98 92.57 64.64 93.11C62.29 93.64 59.93 94 57.64 94.21C55.36 94.42 53.09 94.46 50.94 94.36C48.78 94.25 46.67 93.98 44.7 93.58C42.72 93.18 40.83 92.62 39.08 91.95C37.33 91.28 35.69 90.47 34.18 89.56C32.67 88.65 30.72 86.99 30.03 86.48A1.25 1.25 0 0 0 31.71 84.63C32.34 85.05 34.1 86.48 35.49 87.14C36.89 87.81 38.45 88.31 40.05 88.62C41.66 88.94 43.39 89.07 45.14 89.03C46.88 88.99 48.71 88.76 50.52 88.38C52.33 88 54.19 87.44 56 86.75C57.81 86.05 59.63 85.19 61.38 84.22C63.13 83.25 64.86 82.13 66.5 80.93C68.13 79.73 69.72 78.4 71.18 77.02C72.65 75.64 74.04 74.15 75.3 72.65C76.56 71.15 77.72 69.58 78.73 68.03C79.75 66.48 80.65 64.89 81.41 63.36C82.17 61.83 82.79 60.29 83.3 58.85C83.8 57.41 84.16 56.01 84.44 54.72C84.71 53.43 84.85 52.23 84.94 51.13C85.02 50.03 85.02 49.04 84.93 48.14C84.84 47.24 84.65 46.45 84.41 45.73C84.16 45.02 83.85 44.41 83.46 43.82C83.08 43.24 82.32 42.5 82.09 42.24A10.5 10.5 0 0 1 96.17 26.66Z"/><path fill="url(#fr-ga)" d="M30.03 86.48C29.45 85.84 27.57 84.03 26.55 82.62C25.54 81.22 24.64 79.69 23.92 78.03C23.21 76.38 22.63 74.6 22.25 72.72C21.87 70.85 21.66 68.84 21.65 66.78C21.65 64.72 21.83 62.55 22.22 60.37C22.6 58.19 23.2 55.93 23.98 53.7C24.77 51.48 25.76 49.21 26.93 47.02C28.1 44.82 29.47 42.62 31 40.53C32.52 38.44 34.24 36.39 36.09 34.48C37.94 32.58 39.96 30.74 42.08 29.09C44.21 27.43 46.48 25.89 48.82 24.55C51.16 23.22 53.63 22.03 56.13 21.08C58.63 20.13 61.23 19.35 63.81 18.85C66.39 18.34 69.04 18.07 71.62 18.04C74.2 18.02 76.8 18.23 79.3 18.68C81.8 19.13 84.28 19.81 86.61 20.75C88.93 21.69 91.21 22.89 93.25 24.33C95.29 25.77 97.22 27.5 98.84 29.4C100.46 31.3 101.87 33.48 102.96 35.73C104.04 37.98 104.95 41.69 105.35 42.88L84.77 47.06C84.64 46.68 84.35 45.49 84.03 44.82C83.71 44.15 83.34 43.58 82.86 43.03C82.39 42.48 81.86 41.98 81.18 41.51C80.51 41.05 79.73 40.6 78.81 40.25C77.89 39.89 76.82 39.56 75.64 39.36C74.46 39.16 73.13 39.05 71.72 39.04C70.3 39.03 68.77 39.12 67.17 39.31C65.58 39.49 63.87 39.75 62.14 40.13C60.41 40.51 58.6 41 56.8 41.6C55 42.2 53.15 42.92 51.35 43.74C49.55 44.57 47.74 45.51 46.01 46.54C44.28 47.57 42.58 48.72 40.99 49.94C39.4 51.16 37.87 52.48 36.49 53.86C35.1 55.23 33.81 56.69 32.68 58.18C31.56 59.67 30.55 61.23 29.73 62.79C28.91 64.35 28.24 65.97 27.77 67.56C27.3 69.14 27 70.76 26.92 72.32C26.83 73.88 26.94 75.45 27.27 76.92C27.59 78.38 28.13 79.82 28.87 81.11C29.61 82.39 31.23 84.04 31.71 84.63A1.25 1.25 0 0 1 30.03 86.48Z"/></g>
+<rect x="26" y="16" width="148" height="98" rx="30" fill="url(#fr-w)" stroke="#B9C6DC" stroke-width="1.5"/>
+<path d="M64 30H136Q160 30 160 54V80L138 100H64Q40 100 40 76V54Q40 30 64 30Z" fill="url(#fr-v)"/>
+<path d="M160 80L138 100H160Z" fill="url(#fr-flap)"/><g class="eyes"><path d="M67 69Q80 47 93 69" stroke="#21D4FF" stroke-opacity=".12" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M67 69Q80 47 93 69" stroke="#21D4FF" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M107 69Q120 47 133 69" stroke="#21D4FF" stroke-opacity=".12" stroke-width="13" fill="none" stroke-linecap="round"/><path d="M107 69Q120 47 133 69" stroke="#21D4FF" stroke-width="7" fill="none" stroke-linecap="round"/></g></g>
+<path d="M4 11L7.08 18.92L15 22L7.08 25.08L4 33L0.9199999999999999 25.08L-7 22L0.9199999999999999 18.92Z" fill="#21D4FF"/><path d="M204 7L206.52 13.48L213 16L206.52 18.52L204 25L201.48 18.52L195 16L201.48 13.48Z" fill="#21D4FF"/></symbol>
+    <symbol id="fredy-think" viewBox="-26 -24 252 238"><rect x="68" y="188" width="28" height="16" rx="6" fill="url(#fr-s)"/><rect x="104" y="188" width="28" height="16" rx="6" fill="url(#fr-s)"/>
+<rect x="88" y="104" width="24" height="12" rx="4" fill="url(#fr-s)"/>
+<path d="M72 112H128Q142 112 142 126L135 176Q134 190 120 190H80Q66 190 65 176L58 126Q58 112 72 112Z" fill="url(#fr-w)" stroke="#B9C6DC" stroke-width="1.5"/>
+<rect x="76" y="174" width="48" height="4" rx="2" fill="url(#fr-s)"/>
+<rect x="84" y="128" width="32" height="32" rx="9" fill="#0B1B3B"/>
+<g transform="translate(85.2 129.2) scale(.25)"><path fill="url(#fr-gb)" d="M96.17 26.66C96.97 27.58 99.62 30.19 100.96 32.22C102.3 34.24 103.41 36.5 104.22 38.79C105.03 41.08 105.56 43.53 105.82 45.95C106.08 48.37 106.07 50.87 105.78 53.3C105.5 55.74 104.9 58.19 104.1 60.53C103.3 62.88 102.22 65.19 100.98 67.37C99.74 69.56 98.26 71.67 96.66 73.64C95.05 75.62 93.25 77.5 91.35 79.23C89.46 80.96 87.4 82.58 85.29 84.04C83.17 85.5 80.93 86.83 78.67 87.99C76.41 89.16 74.05 90.17 71.72 91.03C69.38 91.88 66.98 92.57 64.64 93.11C62.29 93.64 59.93 94 57.64 94.21C55.36 94.42 53.09 94.46 50.94 94.36C48.78 94.25 46.67 93.98 44.7 93.58C42.72 93.18 40.83 92.62 39.08 91.95C37.33 91.28 35.69 90.47 34.18 89.56C32.67 88.65 30.72 86.99 30.03 86.48A1.25 1.25 0 0 0 31.71 84.63C32.34 85.05 34.1 86.48 35.49 87.14C36.89 87.81 38.45 88.31 40.05 88.62C41.66 88.94 43.39 89.07 45.14 89.03C46.88 88.99 48.71 88.76 50.52 88.38C52.33 88 54.19 87.44 56 86.75C57.81 86.05 59.63 85.19 61.38 84.22C63.13 83.25 64.86 82.13 66.5 80.93C68.13 79.73 69.72 78.4 71.18 77.02C72.65 75.64 74.04 74.15 75.3 72.65C76.56 71.15 77.72 69.58 78.73 68.03C79.75 66.48 80.65 64.89 81.41 63.36C82.17 61.83 82.79 60.29 83.3 58.85C83.8 57.41 84.16 56.01 84.44 54.72C84.71 53.43 84.85 52.23 84.94 51.13C85.02 50.03 85.02 49.04 84.93 48.14C84.84 47.24 84.65 46.45 84.41 45.73C84.16 45.02 83.85 44.41 83.46 43.82C83.08 43.24 82.32 42.5 82.09 42.24A10.5 10.5 0 0 1 96.17 26.66Z"/><path fill="url(#fr-ga)" d="M30.03 86.48C29.45 85.84 27.57 84.03 26.55 82.62C25.54 81.22 24.64 79.69 23.92 78.03C23.21 76.38 22.63 74.6 22.25 72.72C21.87 70.85 21.66 68.84 21.65 66.78C21.65 64.72 21.83 62.55 22.22 60.37C22.6 58.19 23.2 55.93 23.98 53.7C24.77 51.48 25.76 49.21 26.93 47.02C28.1 44.82 29.47 42.62 31 40.53C32.52 38.44 34.24 36.39 36.09 34.48C37.94 32.58 39.96 30.74 42.08 29.09C44.21 27.43 46.48 25.89 48.82 24.55C51.16 23.22 53.63 22.03 56.13 21.08C58.63 20.13 61.23 19.35 63.81 18.85C66.39 18.34 69.04 18.07 71.62 18.04C74.2 18.02 76.8 18.23 79.3 18.68C81.8 19.13 84.28 19.81 86.61 20.75C88.93 21.69 91.21 22.89 93.25 24.33C95.29 25.77 97.22 27.5 98.84 29.4C100.46 31.3 101.87 33.48 102.96 35.73C104.04 37.98 104.95 41.69 105.35 42.88L84.77 47.06C84.64 46.68 84.35 45.49 84.03 44.82C83.71 44.15 83.34 43.58 82.86 43.03C82.39 42.48 81.86 41.98 81.18 41.51C80.51 41.05 79.73 40.6 78.81 40.25C77.89 39.89 76.82 39.56 75.64 39.36C74.46 39.16 73.13 39.05 71.72 39.04C70.3 39.03 68.77 39.12 67.17 39.31C65.58 39.49 63.87 39.75 62.14 40.13C60.41 40.51 58.6 41 56.8 41.6C55 42.2 53.15 42.92 51.35 43.74C49.55 44.57 47.74 45.51 46.01 46.54C44.28 47.57 42.58 48.72 40.99 49.94C39.4 51.16 37.87 52.48 36.49 53.86C35.1 55.23 33.81 56.69 32.68 58.18C31.56 59.67 30.55 61.23 29.73 62.79C28.91 64.35 28.24 65.97 27.77 67.56C27.3 69.14 27 70.76 26.92 72.32C26.83 73.88 26.94 75.45 27.27 76.92C27.59 78.38 28.13 79.82 28.87 81.11C29.61 82.39 31.23 84.04 31.71 84.63A1.25 1.25 0 0 1 30.03 86.48Z"/></g><g transform="translate(58 130) rotate(10)"><rect x="-7" y="-4" width="14" height="38" rx="7" fill="url(#fr-arm)" stroke="#B9C6DC" stroke-width="1.5"/><rect x="-8.5" y="30" width="17" height="14" rx="6" fill="url(#fr-s)" stroke="#9FB0C9" stroke-width="1.5"/></g><g transform="translate(142 130) rotate(-10)"><rect x="-7" y="-4" width="14" height="38" rx="7" fill="url(#fr-arm)" stroke="#B9C6DC" stroke-width="1.5"/><rect x="-8.5" y="30" width="17" height="14" rx="6" fill="url(#fr-s)" stroke="#9FB0C9" stroke-width="1.5"/></g>
+<g transform="rotate(4 100 124)"><rect x="96" y="0" width="8" height="18" rx="4" fill="url(#fr-s)"/>
+<g transform="translate(81.4 -24.5) scale(.3)"><path fill="url(#fr-gb)" d="M96.17 26.66C96.97 27.58 99.62 30.19 100.96 32.22C102.3 34.24 103.41 36.5 104.22 38.79C105.03 41.08 105.56 43.53 105.82 45.95C106.08 48.37 106.07 50.87 105.78 53.3C105.5 55.74 104.9 58.19 104.1 60.53C103.3 62.88 102.22 65.19 100.98 67.37C99.74 69.56 98.26 71.67 96.66 73.64C95.05 75.62 93.25 77.5 91.35 79.23C89.46 80.96 87.4 82.58 85.29 84.04C83.17 85.5 80.93 86.83 78.67 87.99C76.41 89.16 74.05 90.17 71.72 91.03C69.38 91.88 66.98 92.57 64.64 93.11C62.29 93.64 59.93 94 57.64 94.21C55.36 94.42 53.09 94.46 50.94 94.36C48.78 94.25 46.67 93.98 44.7 93.58C42.72 93.18 40.83 92.62 39.08 91.95C37.33 91.28 35.69 90.47 34.18 89.56C32.67 88.65 30.72 86.99 30.03 86.48A1.25 1.25 0 0 0 31.71 84.63C32.34 85.05 34.1 86.48 35.49 87.14C36.89 87.81 38.45 88.31 40.05 88.62C41.66 88.94 43.39 89.07 45.14 89.03C46.88 88.99 48.71 88.76 50.52 88.38C52.33 88 54.19 87.44 56 86.75C57.81 86.05 59.63 85.19 61.38 84.22C63.13 83.25 64.86 82.13 66.5 80.93C68.13 79.73 69.72 78.4 71.18 77.02C72.65 75.64 74.04 74.15 75.3 72.65C76.56 71.15 77.72 69.58 78.73 68.03C79.75 66.48 80.65 64.89 81.41 63.36C82.17 61.83 82.79 60.29 83.3 58.85C83.8 57.41 84.16 56.01 84.44 54.72C84.71 53.43 84.85 52.23 84.94 51.13C85.02 50.03 85.02 49.04 84.93 48.14C84.84 47.24 84.65 46.45 84.41 45.73C84.16 45.02 83.85 44.41 83.46 43.82C83.08 43.24 82.32 42.5 82.09 42.24A10.5 10.5 0 0 1 96.17 26.66Z"/><path fill="url(#fr-ga)" d="M30.03 86.48C29.45 85.84 27.57 84.03 26.55 82.62C25.54 81.22 24.64 79.69 23.92 78.03C23.21 76.38 22.63 74.6 22.25 72.72C21.87 70.85 21.66 68.84 21.65 66.78C21.65 64.72 21.83 62.55 22.22 60.37C22.6 58.19 23.2 55.93 23.98 53.7C24.77 51.48 25.76 49.21 26.93 47.02C28.1 44.82 29.47 42.62 31 40.53C32.52 38.44 34.24 36.39 36.09 34.48C37.94 32.58 39.96 30.74 42.08 29.09C44.21 27.43 46.48 25.89 48.82 24.55C51.16 23.22 53.63 22.03 56.13 21.08C58.63 20.13 61.23 19.35 63.81 18.85C66.39 18.34 69.04 18.07 71.62 18.04C74.2 18.02 76.8 18.23 79.3 18.68C81.8 19.13 84.28 19.81 86.61 20.75C88.93 21.69 91.21 22.89 93.25 24.33C95.29 25.77 97.22 27.5 98.84 29.4C100.46 31.3 101.87 33.48 102.96 35.73C104.04 37.98 104.95 41.69 105.35 42.88L84.77 47.06C84.64 46.68 84.35 45.49 84.03 44.82C83.71 44.15 83.34 43.58 82.86 43.03C82.39 42.48 81.86 41.98 81.18 41.51C80.51 41.05 79.73 40.6 78.81 40.25C77.89 39.89 76.82 39.56 75.64 39.36C74.46 39.16 73.13 39.05 71.72 39.04C70.3 39.03 68.77 39.12 67.17 39.31C65.58 39.49 63.87 39.75 62.14 40.13C60.41 40.51 58.6 41 56.8 41.6C55 42.2 53.15 42.92 51.35 43.74C49.55 44.57 47.74 45.51 46.01 46.54C44.28 47.57 42.58 48.72 40.99 49.94C39.4 51.16 37.87 52.48 36.49 53.86C35.1 55.23 33.81 56.69 32.68 58.18C31.56 59.67 30.55 61.23 29.73 62.79C28.91 64.35 28.24 65.97 27.77 67.56C27.3 69.14 27 70.76 26.92 72.32C26.83 73.88 26.94 75.45 27.27 76.92C27.59 78.38 28.13 79.82 28.87 81.11C29.61 82.39 31.23 84.04 31.71 84.63A1.25 1.25 0 0 1 30.03 86.48Z"/></g>
+<rect x="26" y="16" width="148" height="98" rx="30" fill="url(#fr-w)" stroke="#B9C6DC" stroke-width="1.5"/>
+<path d="M64 30H136Q160 30 160 54V80L138 100H64Q40 100 40 76V54Q40 30 64 30Z" fill="url(#fr-v)"/>
+<path d="M160 80L138 100H160Z" fill="url(#fr-flap)"/><g class="eyes"><rect x="62" y="46" width="16" height="28" rx="8" fill="#21D4FF" fill-opacity=".12"/><rect x="65" y="49" width="10" height="22" rx="5" fill="#21D4FF"/><rect x="90" y="46" width="16" height="28" rx="8" fill="#21D4FF" fill-opacity=".12"/><rect x="93" y="49" width="10" height="22" rx="5" fill="#21D4FF"/></g></g>
+<circle class="d0" cx="190" cy="30" r="6" fill="#21D4FF"/><circle class="d1" cx="204" cy="30" r="6" fill="#21D4FF"/><circle class="d2" cx="218" cy="30" r="6" fill="#21D4FF"/></symbol>
+  </defs>
+</svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="TryFreed, página inicial"><picture><source srcset="/brand/of/logo-of-h-escuro.svg" media="(prefers-color-scheme: dark)"><img src="/brand/of/logo-of-h.svg" alt="" width="108" height="36"></picture></a>
+    <nav class="nav-r" aria-label="Conta"><button class="btn-link lang-btn" type="button" id="langBtn" aria-label="EN: mudar idioma para English">EN</button><a class="btn-link" href="/login/">Entrar</a><a class="btn btn-outline" href="/login/?plan=monthly">Criar conta</a></nav>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="wrap">
+      <div>
+        <h1>Seu dinheiro, finalmente <span class="rot" id="rot">com propósito.</span></h1>
+        <p class="lede">Cada salário é dividido entre contas, metas e o seu dinheiro livre, e toda semana você sabe quanto separar para as contas.</p>
+        <p class="lede" style="font-weight:800;margin-top:-6px">Quem antecipa governa.</p>
+        <div class="hero-cta"><a class="btn btn-primary" href="/login/?plan=monthly">Montar meu plano</a><a class="btn btn-outline" href="#como">Ver como funciona</a></div>
+        <div class="hero-trust">
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>Sem conectar o banco</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/></svg>Português e inglês</span>
+          <span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Garantia de 30 dias na 1ª assinatura</span>
+        </div>
+      </div>
+
+      <div class="flow" role="img" aria-label="Exemplo ilustrativo: salário de 4.000 dólares dividido em contas 2.065, livre 1.335 e metas 600; separe esta semana 480 dólares para as contas">
+        <svg class="lines" viewBox="0 0 520 540" preserveAspectRatio="none" aria-hidden="true">
+          <path class="ln" d="M260 70 C260 120,110 110,110 175"/>
+          <path class="ln" d="M110 175 C110 200,170 185,230 185"/>
+          <path class="ln" d="M110 175 C110 270,170 300,230 300"/>
+          <path class="ln" d="M110 175 C110 370,170 405,230 405"/>
+        </svg>
+        <div class="node n-in"><h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h15a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><path d="M3 7l12-4v4"/></svg>Salário</h4><div class="bar"><span class="num">$4.000 / mês</span></div></div>
+        <span class="tag t1">Todo mês</span><span class="tag t2">Metas</span>
+        <div class="node n-b"><h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>Contas</h4><div class="bar"><i style="width:82%"></i><span class="num">$2.065</span><em>todo mês</em></div><span class="sub">inclui $240 de generosidade</span></div>
+        <div class="node n-s"><h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="3"/><path d="M3 10h18"/></svg>Livre</h4><div class="bar"><i style="width:60%"></i><span class="num">$1.335</span><em>$480 p/ contas</em></div></div>
+        <div class="node n-g"><h4><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Reserva de emergência</h4><div class="bar"><i style="width:34%"></i><span class="num">$600/mês</span><em>pronta em 5 meses</em></div></div>
+        <div class="today-chip"><small>Separe esta semana</small><strong class="num">$480</strong></div>
+        <svg class="fredy hero-fredy" viewBox="0 0 240 240" aria-hidden="true"><use href="#fredy-wink"/></svg>
+        <p class="legend">Exemplo ilustrativo. No app, os números vêm do que você informa.</p>
+      </div>
+    </div>
+  </div>
+
+  <section id="como" class="wrap" aria-labelledby="como-t">
+    <div class="head rv"><h2 id="como-t">Seu plano se monta enquanto você vive.</h2><p>Você conta o que entra e o que sai. A gente faz a conta, todo dia.</p><p class="legend">Exemplo ilustrativo. No app, os números vêm do que você informa.</p></div>
+    <div class="scrolly">
+      <div class="rail" id="rail"><div class="rail-fill" id="railFill"></div>
+        <div class="step" data-s="0"><span class="k">Semana</span><h3>Um valor pra separar.</h3><p>Abra o app e veja quanto separar esta semana para as contas. O resto é seu. Pagou algo? Toque em "Paguei" e o plano se ajusta.</p><div class="mini" data-mini="0"></div></div>
+        <div class="step" data-s="1"><span class="k">O mês</span><h3>Seu salário ganha destino assim que chega.</h3><p>As contas fixas, com a generosidade incluída, saem primeiro, e as metas ficam com a parte delas. O que sobra fica livre: é seu, pra usar em paz.</p><div class="mini" data-mini="1"></div></div>
+        <div class="step" data-s="2"><span class="k">O futuro</span><h3>Veja o dia em que cada meta fica pronta.</h3><p>Viagem, reserva, carro: você vê a data em que chega lá se seguir o plano.</p><div class="mini" data-mini="2"></div></div>
+      </div>
+      <div class="phone-col"><div class="phone"><div class="screen" id="screen"></div></div></div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="fredy-t">
+    <div class="fredy-sec">
+      <div class="head rv" style="margin-bottom:0"><h2 id="fredy-t">Conta pro Fredy. Ele anota por você.</h2><p>Mande um áudio, a foto do recibo ou uma planilha. O Fredy monta os lançamentos e só salva quando você confirma.</p>
+        <div class="ways">
+          <span class="way"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>Voz</span>
+          <span class="way"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/></svg>Foto do recibo</span>
+          <span class="way"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg>Planilha</span>
+        </div>
+      </div>
+      <div>
+        <div class="chat" id="chat" role="group" aria-label="Exemplo de conversa com o Fredy">
+          <p class="msg me">Gastei 32 no mercado e a academia agora é 45 por mês</p>
+          <div class="botrow typing-row"><svg class="fredy" viewBox="0 0 240 240" aria-hidden="true"><use href="#fredy-wink"/></svg><div class="typing" aria-hidden="true"><i></i><i></i><i></i></div></div>
+          <div class="botrow msg"><svg class="fredy" viewBox="0 0 240 240" aria-hidden="true"><use href="#fredy-wink"/></svg><div class="bot" style="padding:12px 16px;border-radius:20px">Anotei duas coisas:<br>Mercado, $32, hoje, em Alimentação.<br>Academia, $45 todo mês, em Saúde.<div class="acts" aria-hidden="true"><span class="chip chip-ok">Salvar as duas</span><span class="chip">Editar</span></div></div></div>
+          <p class="msg me">Quanto posso gastar até sexta?</p>
+          <div class="botrow msg"><svg class="fredy" viewBox="0 0 240 240" aria-hidden="true"><use href="#fredy-wink"/></svg><p class="bot" style="padding:12px 16px;border-radius:20px">Já separei o aluguel de segunda. Até sexta, sobram $412.</p></div>
+        </div>
+        <p class="legend" style="margin-top:10px">Exemplo ilustrativo. No app, os números vêm do que você informa.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-labelledby="tudo-t">
+    <div class="head rv"><h2 id="tudo-t">Todo o seu dinheiro num lugar só.</h2></div>
+    <div class="tilt-stage"><div class="tilt">
+      <div class="tile rv"><span class="ic" style="background:var(--sky-bg)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span><h3>Calendário de contas</h3><p>Veja as contas dos próximos 7 dias e toque em "Paguei".</p></div>
+      <div class="tile rv"><span class="ic" style="background:var(--sun-bg)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span><h3>Metas com data</h3><p>Quanto guardar por semana pra chegar lá no prazo.</p></div>
+      <div class="tile rv"><span class="ic" style="background:var(--deep-bg)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h15a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><path d="M3 7l12-4v4"/></svg></span><h3>Dívidas com data pra acabar</h3><p>Juros, parcelas e o dia em que cada dívida termina.</p></div>
+      <div class="tile rv"><span class="ic" style="background:var(--action-soft)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><circle cx="16.5" cy="9.5" r="2.8"/><path d="M3 20c.6-3.4 3-5.5 6-5.5s5.4 2.1 6 5.5M14.5 15c2.8-.4 5.6 1.3 6.5 5"/></svg></span><h3>Modo casal</h3><p>O que é seu, o que é do seu par e o que é de vocês dois.</p></div>
+      <div class="tile rv"><span class="ic" style="background:var(--action-soft)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF4FA3" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span><h3>Generosidade nas contas</h3><p>Doar e ofertar fazem parte do plano. Lance como qualquer conta, na categoria Generosidade, e veja nos relatórios quanto você deu em cada mês.</p></div>
+      <div class="tile rv"><span class="ic" style="background:var(--sky-bg)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><h3>Relatórios</h3><p>Veja pra onde o dinheiro foi, por categoria e por mês. Exporte em Excel ou PDF.</p></div>
+      <div class="tile rv"><span class="ic" style="background:var(--sky-bg)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span><h3>O plano do Fredy</h3><p>Quando o dinheiro aperta, o Fredy mostra quanto ter até a data, sugere pedir a mudança de um vencimento ou pausar contas flexíveis. Você decide.</p></div>
+    </div></div>
+    <p class="soon-line"><span class="soon">Em desenvolvimento</span><span>Carteira da empresa: o dinheiro do negócio separado do pessoal, com um cofre pros impostos trimestrais. Ainda não incluída na assinatura.</span></p>
+  </section>
+
+  <section class="wrap" aria-labelledby="why-t">
+    <div class="why rv">
+      <svg class="fredy" viewBox="0 0 240 240" aria-hidden="true"><use href="#fredy-love"/></svg>
+      <div>
+        <h2 id="why-t">Por que o TryFreed existe</h2>
+        <p>Eu criei o TryFreed porque também me perdi nos números no fim do mês.</p>
+        <p>Ele nasceu para transformar caos financeiro em clareza: simples, honesto, sem enrolação.</p>
+        <p>Pra mim, o dinheiro segue os valores, não o contrário.</p>
+        <blockquote><span>"Onde estiver o seu tesouro, aí também estará o seu coração."</span><cite>Mateus 6:21</cite></blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="precos" class="wrap" aria-labelledby="preco-t">
+    <div class="head rv"><h2 id="preco-t">Um preço simples.</h2><p>Todas as funcionalidades nos dois planos.</p></div>
+    <div class="prices">
+      <div class="price rv"><h3>Mensal</h3><p class="amt num">$9.99 <small>por mês</small></p><p>Pague mês a mês.</p><a class="btn btn-outline" href="/login/?plan=monthly">Assinar o mensal</a><p class="renew">Renova automaticamente todo mês por $9.99 até você cancelar.</p></div>
+      <div class="price best rv"><h3>Anual</h3><p class="amt num">$99.99 <small>por ano</small></p><p>Sai a $8.33 por mês, $19.89 a menos que 12 meses do mensal.</p><a class="btn btn-primary" href="/login/?plan=annual">Assinar o anual</a><p class="renew">Renova automaticamente todo ano por $99.99 até você cancelar.</p></div>
+    </div>
+    <p class="guarantee">Garantia de 30 dias na primeira assinatura: peça em até 30 dias da primeira cobrança e receba o valor total de volta. Para cancelar, vá em Menu &gt; Gerenciar assinatura. Se preferir, escreva para support@tryfreed.com. Regras na <a href="/refund.html">política de reembolso</a>.</p>
+  </section>
+
+  <section class="wrap" aria-labelledby="faq-t" style="padding-top:0">
+    <div class="head head-row"><svg class="fredy" viewBox="0 0 240 240" width="64" height="64" aria-hidden="true"><use href="#fredy-think"/></svg><h2 id="faq-t">Perguntas</h2></div>
+    <div class="faq">
+      <details><summary>Preciso conectar minha conta do banco?</summary><p>Não. Você lança contas e entradas por texto, voz, foto ou planilha. A gente nunca pede acesso ao seu banco.</p></details>
+      <details><summary>Meus dados estão seguros?</summary><p>Cada conta só vê os próprios dados, e dá pra travar o app com PIN. Não vendemos seus dados nem usamos para anúncios ou para te oferecer produtos financeiros. Fornecedores como hospedagem, pagamento e IA só processam o necessário pro app funcionar.</p></details>
+      <details><summary>Funciona em português e inglês?</summary><p>Sim. Dá pra trocar o idioma quando quiser, dentro do app.</p></details>
+      <details><summary>Consigo cancelar sozinho?</summary><p>Sim. No app, vá em Menu &gt; Gerenciar assinatura para cancelar ou trocar o cartão. O acesso continua até o fim do período já pago. E a garantia de 30 dias vale na primeira assinatura.</p></details>
+      <details><summary>Posso apagar meus dados?</summary><p>Pode. No Menu você exporta tudo para o Excel e apaga a sua conta; os dados são removidos em até 30 dias. Os dados são seus.</p></details>
+      <details><summary>O TryFreed substitui um contador?</summary><p>Não. Ele organiza e projeta o seu dinheiro. Pra decisões de impostos e investimentos, fale com um profissional.</p></details>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="closing rv">
+    <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div>
+      <h2>Seu dinheiro com propósito.</h2>
+      <p>Crie sua conta, diga quanto entra e veja quanto separar esta semana.</p>
+      <a class="btn btn-primary" href="/login/?plan=monthly">Montar meu plano</a>
+    </div>
+    <svg class="fredy" viewBox="0 0 240 240" aria-hidden="true"><use href="#fredy-wink"/></svg>
+  </div></div>
+</main>
+
+<div class="wrap"><footer><p>© 2026 TryFreed. O TryFreed é uma ferramenta de orçamento, não aconselhamento financeiro, fiscal ou de investimentos. O Fredy pode errar; revise antes de confirmar.</p><nav aria-label="Rodapé"><a href="/privacy.html">Privacidade</a><a href="/terms.html">Termos</a><a href="/refund.html">Reembolso</a></nav></footer></div>
+
+<script>
+(function(){
+  var F=function(id,w){return '<svg class="fredy" viewBox="0 0 240 240" width="'+w+'" height="'+w+'" aria-hidden="true"><use href="#'+id+'"/></svg>'};
+  var screens=[
+    '<div class="title">Separe esta semana</div><div class="today-card">'+F('fredy-wink',96)+'<small>para as contas</small><strong class="num">$480</strong></div><div class="row"><span>Internet · 14/11</span><span class="pay">Paguei</span></div><div class="row"><span>Aluguel · segunda</span><b class="num">$1.400</b></div>',
+    '<div class="title">Salário de novembro</div><div class="row"><span>Entrou</span><b class="num">$4.000</b></div><div class="cols"><div class="col c-b"><span class="num">$2.065</span>Contas</div><div class="col c-s"><span class="num">$1.335</span>Livre</div><div class="col c-g"><span class="num">$600</span>Metas</div></div>',
+    '<div class="title title-f">'+F('fredy-wink',34)+'<span>Suas metas</span></div><div class="chart"><svg viewBox="0 0 260 120" aria-hidden="true"><path class="a" d="M0 112 L60 98 L120 78 L180 54 L260 16 L260 120 L0 120Z"/><path class="l" d="M0 112 L60 98 L120 78 L180 54 L260 16"/></svg></div><div class="goal"><span>Reserva de emergência</span><b>abr/2027</b></div><div class="goal"><span>Viagem ao Brasil</span><b>jul/2027</b></div>'
+  ];
+  document.documentElement.classList.add('js');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var words=TF_WORDS[TF_LANG], wi=0, rot=document.getElementById('rot');
+  if(!reduce){
+    var turns=0, timer=setInterval(function(){
+      rot.classList.add('out');
+      setTimeout(function(){wi=(wi+1)%words.length;rot.textContent=TF_WORDS[TF_LANG][wi];rot.classList.remove('out');rot.classList.add('pre');
+        requestAnimationFrame(function(){requestAnimationFrame(function(){rot.classList.remove('pre')})});},350);
+      if(++turns>=words.length) clearInterval(timer); /* uma volta e para na 1ª palavra (WCAG 2.2.2) */
+    },2600);
+  }
+  var scr=document.getElementById('screen');
+  scr.innerHTML=screens.map(function(h,i){return '<div class="scr'+(i===0?' on':'')+'" data-i="'+i+'">'+h+'</div>'}).join('');
+  document.querySelectorAll('[data-mini]').forEach(function(m){var i=+m.getAttribute('data-mini');m.innerHTML='<div class="phone"><div class="screen"><div class="scr on">'+screens[i]+'</div></div></div>'});
+
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  function setStep(i){steps.forEach(function(s,k){s.classList.toggle('on',k===i)});scr.querySelectorAll('.scr').forEach(function(s,k){s.classList.toggle('on',k===i)})}
+  setStep(0);
+  var rail=document.getElementById('rail'), fill=document.getElementById('railFill');
+  function onScroll(){
+    var r=rail.getBoundingClientRect(), vh=innerHeight;
+    fill.style.setProperty('--p',(Math.min(1,Math.max(0,(vh*0.5-r.top)/r.height))*100)+'%');
+    var best=0,bd=1e9; steps.forEach(function(s,k){var b=s.getBoundingClientRect();var d=Math.abs(b.top+b.height/2-vh/2);if(d<bd){bd=d;best=k}}); setStep(best);
+  }
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  var chat=document.getElementById('chat'), started=false;
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15});
+    document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+    new IntersectionObserver(function(es){if(es[0].isIntersecting&&!started){started=true;play()}},{threshold:.35}).observe(chat);
+  } else { document.querySelectorAll('.rv').forEach(function(el){el.classList.add('in')}); play(); }
+  function play(){
+    var msgs=[].slice.call(chat.querySelectorAll('.msg')), row=chat.querySelector('.typing-row'), typ=row.querySelector('.typing'), t=200;
+    row.style.display='none';
+    if(reduce){msgs.forEach(function(m){m.classList.add('show')});return}
+    msgs.forEach(function(m){
+      var isBot=m.classList.contains('botrow');
+      if(isBot){setTimeout(function(){chat.insertBefore(row,m);row.style.display='flex';typ.classList.add('show')},t);t+=900;}
+      setTimeout(function(){row.style.display='none';m.classList.add('show')},t);t+=isBot?1100:700;
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  var EN={"Garantia de 30 dias na primeira assinatura: peça em até 30 dias da primeira cobrança e receba o valor total de volta. Para cancelar, vá em Menu > Gerenciar assinatura. Se preferir, escreva para": "30-day money-back guarantee on your first subscription: ask within 30 days of your first charge and get a full refund. To cancel, go to Menu > Manage subscription, or email", ". Regras na": ". Details in the", "Cada salário é dividido entre contas, metas e o seu dinheiro livre, e toda semana você sabe quanto separar para as contas.": "Every paycheck is split between bills, goals and your free money, and every week you know how much to set aside for bills.", "Separe esta semana": "Set aside this week", "para as contas": "for your bills", "$480 p/ contas": "$480 for bills", "Quem antecipa governa.": "Who plans ahead, leads.", "Semana": "Week", "Um valor pra separar.": "One amount to set aside.", "Abra o app e veja quanto separar esta semana para as contas. O resto é seu. Pagou algo? Toque em \"Paguei\" e o plano se ajusta.": "Open the app and see how much to set aside this week for bills. The rest is yours. Paid something? Tap \"Paid\" and your plan adjusts.", "Crie sua conta, diga quanto entra e veja quanto separar esta semana.": "Create your account, tell us what comes in, and see how much to set aside this week.", "Exemplo ilustrativo: salário de 4.000 dólares dividido em contas 2.065, livre 1.335 e metas 600; separe esta semana 480 dólares para as contas": "Illustrative example: a $4,000 paycheck split into bills $2,065, free $1,335 and goals $600; set aside $480 this week for bills", "O plano do Fredy": "Fredy's plan", "Quando o dinheiro aperta, o Fredy mostra quanto ter até a data, sugere pedir a mudança de um vencimento ou pausar contas flexíveis. Você decide.": "When money gets tight, Fredy shows how much to have by the due date and suggests asking to move a due date or pausing flexible bills. You decide.", "Consigo cancelar sozinho?": "Can I cancel on my own?", "Sim. No app, vá em Menu > Gerenciar assinatura para cancelar ou trocar o cartão. O acesso continua até o fim do período já pago. E a garantia de 30 dias vale na primeira assinatura.": "Yes. In the app, go to Menu > Manage subscription to cancel or change your card. You keep access until the end of the period you've paid for. The 30-day guarantee applies to your first subscription.", "Posso apagar meus dados?": "Can I delete my data?", "Pode. No Menu você exporta tudo para o Excel e apaga a sua conta; os dados são removidos em até 30 dias. Os dados são seus.": "Yes. In the Menu you can export everything to Excel and delete your account; your data is removed within 30 days. Your data is yours.", "Entrar": "Sign in", "Criar conta": "Create account", "Seu dinheiro, finalmente": "Your money, finally", "com propósito.": "with purpose.", "em dia.": "on track.", "sem culpa.": "guilt-free.", "em paz.": "at peace.", "Cada salário é dividido entre contas, metas e o seu dinheiro livre, e todo dia você sabe quanto pode gastar.": "Every paycheck is split across bills, goals and money that is yours to use, and every day you know how much you can spend.", "Montar meu plano": "Build my plan", "Ver como funciona": "See how it works", "Sem conectar o banco": "No bank connection needed", "Português e inglês": "English and Portuguese", "Garantia de 30 dias na 1ª assinatura": "30-day guarantee on your first subscription", "Salário": "Paycheck", "$4.000 / mês": "$4,000 / month", "Todo mês": "Every month", "Metas": "Goals", "Contas": "Bills", "todo mês": "monthly", "inclui $240 de generosidade": "includes $240 of giving", "Livre": "Yours", "$61 hoje": "$61 today", "Reserva de emergência": "Emergency fund", "$600/mês": "$600/mo", "pronta em 5 meses": "ready in 5 months", "Pode gastar hoje": "Safe to spend today", "$2.065": "$2,065", "$1.335": "$1,335", "$1.400": "$1,400", "$4.000": "$4,000", "Exemplo ilustrativo. No app, os números vêm do que você informa.": "Illustrative example. In the app, your numbers come from what you enter.", "Seu plano se monta enquanto você vive.": "Your plan builds itself while you live.", "Você conta o que entra e o que sai. A gente faz a conta, todo dia.": "You tell us what comes in and what goes out. We do the math, every day.", "Hoje": "Today", "Um número pro dia.": "One number for your day.", "Abra o app e veja quanto dá pra gastar hoje sem atrasar nenhuma conta. Pagou algo? Toque em \"Paguei\" e o número se ajusta.": "Open the app and see how much you can spend today without missing a bill. Paid something? Tap \"Paid\" and the number updates.", "O mês": "The month", "Seu salário ganha destino assim que chega.": "Your paycheck gets a purpose as soon as it arrives.", "As contas fixas, com a generosidade incluída, saem primeiro, e as metas ficam com a parte delas. O que sobra fica livre: é seu, pra usar em paz.": "Fixed bills, giving included, come out first, and your goals get their share. What is left is yours, free to use in peace.", "O futuro": "The future", "Veja o dia em que cada meta fica pronta.": "See the day each goal will be ready.", "Viagem, reserva, carro: você vê a data em que chega lá se seguir o plano.": "Trip, emergency fund, car: you see the date you get there if you stick to the plan.", "até as 23h59": "until midnight", "Internet · 14/11": "Internet · 11/14", "Paguei": "Paid", "Aluguel · segunda": "Rent · Monday", "Salário de novembro": "November paycheck", "Entrou": "Received", "Suas metas": "Your goals", "abr/2027": "Apr 2027", "Viagem ao Brasil": "Trip to Brazil", "jul/2027": "Jul 2027", "Conta pro Fredy. Ele anota por você.": "Tell Fredy. He writes it down for you.", "Mande um áudio, a foto do recibo ou uma planilha. O Fredy monta os lançamentos e só salva quando você confirma.": "Send a voice note, a photo of a receipt or a spreadsheet. Fredy drafts the entries and only saves them when you confirm.", "Voz": "Voice", "Foto do recibo": "Receipt photo", "Planilha": "Spreadsheet", "Gastei 32 no mercado e a academia agora é 45 por mês": "Spent 32 on groceries, and the gym is now 45 a month", "Anotei duas coisas:": "Got two things:", "Mercado, $32, hoje, em Alimentação.": "Groceries, $32, today, in Food.", "Academia, $45 todo mês, em Saúde.": "Gym, $45 every month, in Health.", "Salvar as duas": "Save both", "Editar": "Edit", "Quanto posso gastar até sexta?": "How much can I spend until Friday?", "Já separei o aluguel de segunda. Até sexta, sobram $412.": "Rent on Monday is already set aside. Until Friday, you have $412 left.", "Todo o seu dinheiro num lugar só.": "All your money in one place.", "Calendário de contas": "Bill calendar", "Veja as contas dos próximos 7 dias e toque em \"Paguei\".": "See the next 7 days of bills and tap \"Paid\".", "Metas com data": "Goals with dates", "Quanto guardar por semana pra chegar lá no prazo.": "How much to save each week to get there on time.", "Dívidas com data pra acabar": "Debt with an end date", "Juros, parcelas e o dia em que cada dívida termina.": "Interest, installments and the day each debt ends.", "Modo casal": "Couples mode", "O que é seu, o que é do seu par e o que é de vocês dois.": "What is yours, what is your partner's and what is shared.", "Generosidade nas contas": "Generosity in your bills", "Doar e ofertar fazem parte do plano. Lance como qualquer conta, na categoria Generosidade, e veja nos relatórios quanto você deu em cada mês.": "Giving is part of the plan. Add it like any other bill, under the Generosity category, and see in your reports how much you gave each month.", "Relatórios": "Reports", "Veja pra onde o dinheiro foi, por categoria e por mês. Exporte em Excel ou PDF.": "See where the money went, by category and by month. Export to Excel or PDF.", "Em desenvolvimento": "In development", "Carteira da empresa: o dinheiro do negócio separado do pessoal, com um cofre pros impostos trimestrais. Ainda não incluída na assinatura.": "Business wallet: business money kept apart from personal, with a vault for quarterly taxes. Not included in your subscription yet.", "Por que o TryFreed existe": "Why TryFreed exists", "Eu criei o TryFreed porque também me perdi nos números no fim do mês.": "I built TryFreed because I also got lost in the numbers at the end of the month.", "Ele nasceu para transformar caos financeiro em clareza: simples, honesto, sem enrolação.": "It was born to turn financial chaos into clarity: simple, honest, no fluff.", "Pra mim, o dinheiro segue os valores, não o contrário.": "To me, money follows values, not the other way around.", "\"Onde estiver o seu tesouro, aí também estará o seu coração.\"": "\"For where your treasure is, there your heart will be also.\"", "Mateus 6:21": "Matthew 6:21", "Um preço simples.": "Simple pricing.", "Todas as funcionalidades nos dois planos.": "Every feature in both plans.", "Mensal": "Monthly", "por mês": "per month", "Pague mês a mês.": "Pay month to month.", "Assinar o mensal": "Get monthly", "Renova automaticamente todo mês por $9.99 até você cancelar.": "Renews automatically every month at $9.99 until you cancel.", "Anual": "Annual", "por ano": "per year", "Sai a $8.33 por mês, $19.89 a menos que 12 meses do mensal.": "Works out to $8.33 a month, $19.89 less than 12 months of monthly.", "Assinar o anual": "Get annual", "Renova automaticamente todo ano por $99.99 até você cancelar.": "Renews automatically every year at $99.99 until you cancel.", "Garantia de 30 dias na primeira assinatura: peça em até 30 dias da primeira cobrança e receba o valor total de volta. Para cancelar, vá em Menu > Gerenciar assinatura. Se preferir, escreva para support@tryfreed.com. Regras na": "30-day money-back guarantee on your first subscription: ask within 30 days of your first charge and get a full refund. To cancel, go to Menu > Manage subscription, or email support@tryfreed.com if you prefer. Details in the", "política de reembolso": "refund policy", "Perguntas": "Questions", "Preciso conectar minha conta do banco?": "Do I need to connect my bank account?", "Não. Você lança contas e entradas por texto, voz, foto ou planilha. A gente nunca pede acesso ao seu banco.": "No. You add bills and income by text, voice, photo or spreadsheet. We never ask for access to your bank.", "Meus dados estão seguros?": "Is my data safe?", "Cada conta só vê os próprios dados, e dá pra travar o app com PIN. Não vendemos seus dados nem usamos para anúncios ou para te oferecer produtos financeiros. Fornecedores como hospedagem, pagamento e IA só processam o necessário pro app funcionar.": "Each account only sees its own data, and you can lock the app with a PIN. We do not sell your data or use it for ads or to offer you financial products. Providers like hosting, payments and AI only process what is needed to run the app.", "Funciona em português e inglês?": "Does it work in English and Portuguese?", "Sim. Dá pra trocar o idioma quando quiser, dentro do app.": "Yes. You can switch languages whenever you like, inside the app.", "O TryFreed substitui um contador?": "Does TryFreed replace an accountant?", "Não. Ele organiza e projeta o seu dinheiro. Pra decisões de impostos e investimentos, fale com um profissional.": "No. It organizes and projects your money. For tax and investment decisions, talk to a professional.", "Seu dinheiro com propósito.": "Your money, with purpose.", "Crie sua conta, diga quanto entra e veja o seu primeiro número do dia.": "Create your account, tell us what comes in and see your first number of the day.", "© 2026 TryFreed. O TryFreed é uma ferramenta de orçamento, não aconselhamento financeiro, fiscal ou de investimentos. O Fredy pode errar; revise antes de confirmar.": "© 2026 TryFreed. TryFreed is a budgeting tool, not financial, tax or investment advice. Fredy can make mistakes; review before you confirm.", "Privacidade": "Privacy", "Termos": "Terms", "Reembolso": "Refunds", "TryFreed, página inicial": "TryFreed, home", "Conta": "Account", "Exemplo: salário de 4.000 dólares dividido em contas 2.065, livre 1.335 e metas 600; pode gastar hoje 61 dólares": "Example: a $4,000 paycheck split into bills $2,065, yours $1,335 and goals $600; safe to spend today $61", "Exemplo de conversa com o Fredy": "Example conversation with Fredy", "Rodapé": "Footer"}, TITLE={"pt": "TryFreed — Cada salário com propósito", "en": "TryFreed — Every paycheck with purpose"}, PT={}; Object.keys(EN).forEach(function(k){PT[EN[k]]=k});
+  function apply(lang){
+    var map=lang==='en'?EN:PT;
+    var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),n;
+    while(n=w.nextNode()){var t=n.nodeValue,s=t.trim();if(s&&map[s]!==undefined)n.nodeValue=t.replace(s,map[s]);}
+    document.querySelectorAll('[aria-label]').forEach(function(e){var a=e.getAttribute('aria-label');if(map[a]!==undefined)e.setAttribute('aria-label',map[a])});
+    document.documentElement.lang=lang==='en'?'en':'pt-BR';
+    document.title=TITLE[lang];
+    var b=document.getElementById('langBtn');
+    if(b){b.textContent=lang==='en'?'PT':'EN';b.setAttribute('aria-label',lang==='en'?'PT: switch language to Português':'EN: mudar idioma para English');}
+    TF_LANG=lang;
+  }
+  if(TF_LANG==='en') apply('en');
+  document.getElementById('langBtn').addEventListener('click',function(){
+    var l=TF_LANG==='en'?'pt':'en'; apply(l); try{localStorage.setItem('lang',l)}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>
