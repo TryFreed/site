@@ -32,7 +32,7 @@ window._gsTimeout = setTimeout(function(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/login/css/app.css?v=1794736741">
+<link rel="stylesheet" href="/login/css/app.css?v=1794737701">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -1190,6 +1190,16 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
+<!-- ERRO AO CARREGAR (leitura dos dados falhou) -->
+<div id="loadErrScreen" style="display:none" role="alert">
+  <div class="le-card">
+    <div class="pw-title" id="leTitle">Não conseguimos carregar seus dados</div>
+    <div class="pw-sub" id="leSub">Nada foi perdido. Confira a internet e tente de novo.</div>
+    <button class="pw-btn" id="leRetryBtn" onclick="retryLoad()">Tentar novamente</button>
+    <button class="pw-logout-btn" id="leLogoutBtn" onclick="_supa.auth.signOut()">Entrar com outra conta</button>
+  </div>
+</div>
+
 <!-- PROFILE EDIT MODAL -->
 <div id="profileEditModal">
   <div class="debt-pay-card" style="max-height:90vh;overflow-y:auto;width:100%;max-width:380px">
@@ -1290,8 +1300,8 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
-<script src="/login/js/i18n.js?v=1794736741"></script>
-<script src="/login/js/fredy-rig.js?v=1794736741"></script>
+<script src="/login/js/i18n.js?v=1794737701"></script>
+<script src="/login/js/fredy-rig.js?v=1794737701"></script>
 <script>
 // ── LAZY SCRIPT LOADER ────────────────────────────────────────────
 const _loadedScripts={};
@@ -1602,7 +1612,7 @@ function showHome(){
 }
 function showLogin(){
   _hideLoading();
-  ['loginScreen','resetScreen','onboardingScreen','pinScreen','pinSetupScreen','paywallScreen'].forEach(id=>{
+  ['loginScreen','resetScreen','onboardingScreen','pinScreen','pinSetupScreen','paywallScreen','loadErrScreen'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.style.display='none';
   });
@@ -1838,26 +1848,32 @@ async function loadFromSupabase(){
   await _supa.auth.getSession();
   const uid = _user.id;
   let r,b,m,dv,prof;
-  try {
-    console.log('[load] iniciando queries para', _user.id);
-    [r,b,m,dv,prof] = await Promise.all([
-      _supa.from('rendas').select('*').eq('user_id',_user.id),
-      _supa.from('bills').select('*').eq('user_id',_user.id),
-      _supa.from('metas').select('*').eq('user_id',_user.id),
-      _supa.from('dividas').select('*').eq('user_id',_user.id),
-      _supa.from('profiles').select('*').eq('user_id',_user.id).maybeSingle(),
-    ]);
-    console.log('[load] todas as queries ok');
-  } catch(e) {
-    console.error('[load] erro de rede:', e.message);
-    _showToast('Erro ao carregar dados. Tente novamente.');
-    return false;
+  // Leitura falhou (rede ou erro em qualquer consulta): tenta mais uma vez e, se
+  // continuar, devolve false SEM tocar nos dados em memória nem no perfil. Assim
+  // um assinante nunca cai na tela de assinatura por causa de uma leitura que falhou.
+  let loadErr=null;
+  for(let attempt=0;attempt<2;attempt++){
+    loadErr=null;
+    try {
+      [r,b,m,dv,prof] = await Promise.all([
+        _supa.from('rendas').select('*').eq('user_id',uid),
+        _supa.from('bills').select('*').eq('user_id',uid),
+        _supa.from('metas').select('*').eq('user_id',uid),
+        _supa.from('dividas').select('*').eq('user_id',uid),
+        _supa.from('profiles').select('*').eq('user_id',uid).maybeSingle(),
+      ]);
+      loadErr=[r.error,b.error,m.error,dv.error,prof.error].filter(Boolean)[0]||null;
+    } catch(e) { loadErr=e; }
+    if(!loadErr) break;
+    // Sem internet a biblioteca já repetiu sozinha; repetir de novo só faria a pessoa esperar mais
+    if(/fetch|network|load failed/i.test(String(loadErr?.message||loadErr))) break;
+    if(attempt===0) await new Promise(res=>setTimeout(res,900));
   }
-  if(r.error||b.error||m.error||dv.error||prof.error){
-    const errs=[r.error,b.error,m.error,dv.error,prof.error].filter(Boolean);
-    if(await _handleAuthError(errs[0])) return;
-    console.error('[load] ERROS nas queries:',errs);
-    _showToast('Erro ao carregar dados: '+errs[0]?.message);
+  if(loadErr){
+    if(await _handleAuthError(loadErr)) return null; // sessão acabou: já foi para o login
+    console.error('[load] falha ao carregar:',loadErr?.message||loadErr);
+    _showToast(t('le_toast'));
+    return false;
   }
   rendas = (r.data||[]).map(x=>({
     id:x.id, name:x.name, val:x.val, type:x.type,
@@ -5203,9 +5219,27 @@ function _stripeLink(plan){
   }catch(e){}
 })();
 
+// Tela de erro quando os dados não carregam (em vez de tela vazia ou de assinatura)
+let _loadErrSkipOb=false;
+function showLoadError(skipOnboarding){
+  _loadErrSkipOb=!!skipOnboarding;
+  ['loginScreen','resetScreen','onboardingScreen','pinScreen','pinSetupScreen','paywallScreen']
+    .forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  const set=(id,k)=>{const el=document.getElementById(id);if(el)el.textContent=t(k);};
+  set('leTitle','le_title');set('leSub','le_sub');set('leRetryBtn','le_retry');set('leLogoutBtn','pw_logout');
+  const b=document.getElementById('leRetryBtn');if(b)b.disabled=false;
+  document.getElementById('loadErrScreen').style.display='flex';
+}
+async function retryLoad(){
+  const b=document.getElementById('leRetryBtn');if(b)b.disabled=true;
+  document.getElementById('loadErrScreen').style.display='none';
+  _showLoading();
+  await checkSubAndLaunch(_loadErrSkipOb);
+}
+
 function showPaywall(){
   _hideLoading();
-  ['loginScreen','resetScreen','onboardingScreen','pinScreen','pinSetupScreen']
+  ['loginScreen','resetScreen','onboardingScreen','pinScreen','pinSetupScreen','loadErrScreen']
     .forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
   applyLang(); // update paywall text for current language
   const mb=document.getElementById('pwMonthBtn'), ab=document.getElementById('pwAnnualBtn');
@@ -5244,8 +5278,9 @@ async function checkSubAndLaunch(skipOnboarding=false){
   try {
     const loaded = await loadFromSupabase(); // single round-trip: data + profile (incl. subscribed)
     if(!loaded){
-      // Falha de rede — NÃO mostrar paywall, o utilizador é assinante
+      // Falha de leitura — NÃO mostrar paywall (pode ser assinante): tela de erro com "tentar novamente"
       _hideLoading();
+      if(loaded===false&&_user) showLoadError(skipOnboarding);
       return;
     }
     if(_appRunning){_hideLoading();return;}

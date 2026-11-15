@@ -868,6 +868,14 @@ body.dark .confirm-delete{background:#dc2626}
 }
 .pw-btn:hover{opacity:.9;transform:translateY(-1px)}
 .pw-btn:active{transform:scale(.98)}
+#loadErrScreen{
+  position:fixed;inset:0;display:flex;align-items:flex-start;justify-content:center;
+  z-index:1100;padding:24px 24px calc(24px + env(safe-area-inset-bottom));
+  overflow-y:auto;background:#060B1F;
+}
+.le-card{width:100%;max-width:360px;margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center}
+.le-card .pw-btn{margin-top:0;font-family:inherit}
+.le-card .pw-btn:disabled{opacity:.6}
 .pw-who{margin-top:24px;font-size:13px;color:#A9BAD7;overflow-wrap:anywhere}
 .pw-who b{color:#fff;font-weight:600}
 .pw-logout-btn{
