@@ -32,7 +32,7 @@ window._gsTimeout = setTimeout(function(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/login/css/app.css?v=1794775372">
+<link rel="stylesheet" href="/login/css/app.css?v=1794776011">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -1307,8 +1307,8 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
-<script src="/login/js/i18n.js?v=1794775372"></script>
-<script src="/login/js/fredy-rig.js?v=1794775372"></script>
+<script src="/login/js/i18n.js?v=1794776011"></script>
+<script src="/login/js/fredy-rig.js?v=1794776011"></script>
 <script>
 // ── LAZY SCRIPT LOADER ────────────────────────────────────────────
 const _loadedScripts={};
@@ -8907,6 +8907,8 @@ async function aiConfirmActions(confirmed){
   if(results.length) msg+=(msg?'\n\n':'')+results.join('\n');
   _aiMsg('ai',msg.trim(),'ok');
 }
+// Frequência no idioma da pessoa (antes saía o código interno, ex.: "weekly")
+function _aiTypeLbl(k){const key='type_'+k,v=t(key);return v===key?k:String(v).toLowerCase();}
 const _AI_TYPES={rendas:['monthly','weekly','biweekly','every2w','once'],bills:['monthly','weekly','biweekly','once','extra']};
 // Dia vindo da IA: despesa semanal = 0 (domingo) a 6 (sábado); as outras = 1..31 ou 99 (último dia). Fora disso: null.
 function _aiDay(type,v){if(v==null||(typeof v==='string'&&v.trim()===''))return null;const n=Number(v);if(!Number.isInteger(n))return null;return type==='weekly'?(n>=0&&n<=6?n:null):((n>=1&&n<=31)||n===99?n:null);}
@@ -9007,7 +9009,7 @@ async function _aiDoActions(actions){
             dow:d.dow!=null?Number(d.dow):5,owner:_aiOwner(d.owner)};
           if(nr.type==='every2w'){const a=_aiE2wNext(d,nr.dow);nr.start_date=_dateToStr(a);nr.dow=a.getDay();nr.day=a.getDate();}
           rendas.push(nr);await saveRenda(nr);
-          results.push(`✓ ${nr.name} — ${fmt(nr.val)} (${nr.type})`);
+          results.push(`✓ ${nr.name} — ${fmt(nr.val)} (${_aiTypeLbl(nr.type)})`);
         } else if(tbl==='bills'){
           const nb={id:newId(),name:d.name||'Despesa',val:Number(d.val)||0,
             type:_AI_TYPES.bills.includes(d.type)?d.type:'monthly',day:_aiDay(d.type,d.day)??1,day2:d.type==='biweekly'?_aiDay('monthly',d.day2):null,locked:false,
@@ -9015,7 +9017,7 @@ async function _aiDoActions(actions){
           if(nb.type==='once'){nb.month=d.month!=null?Number(d.month)-1:now.getMonth();nb.year=Number(d.year)||now.getFullYear();}
           else nb.start_date=_dateToStr(new Date());
           bills.push(nb);await saveBill(nb);
-          results.push(`✓ ${nb.name} — ${fmt(nb.val)} (${nb.type})`);
+          results.push(`✓ ${nb.name} — ${fmt(nb.val)} (${_aiTypeLbl(nb.type)})`);
         } else if(tbl==='metas'){
           const tDay=Number(d.day)||1,tMo=Number(d.month)||(now.getMonth()+2),tYr=Number(d.year)||(now.getFullYear()+1);
           const tDate=new Date(tYr,tMo-1,tDay);
