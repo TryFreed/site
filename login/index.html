@@ -32,7 +32,7 @@ window._gsTimeout = setTimeout(function(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/login/css/app.css?v=1794709875">
+<link rel="stylesheet" href="/login/css/app.css?v=1794736741">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -1185,7 +1185,8 @@ window._gsTimeout = setTimeout(function(){
       </div>
     </div>
     <div class="pw-guarantee"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg> <span id="pwGuarantee">Pagamento seguro via Stripe · Cancele a qualquer momento</span></div>
-    <button class="pw-logout-btn" id="pwLogoutBtn" onclick="_supa.auth.signOut()">Sair</button>
+    <div class="pw-who" id="pwWho" style="display:none"><span id="pwWhoLbl">Você entrou como</span> <b id="pwWhoEmail"></b></div>
+    <button class="pw-logout-btn" id="pwLogoutBtn" onclick="_supa.auth.signOut()">Entrar com outra conta</button>
   </div>
 </div>
 
@@ -1289,8 +1290,8 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
-<script src="/login/js/i18n.js?v=1794709875"></script>
-<script src="/login/js/fredy-rig.js?v=1794709875"></script>
+<script src="/login/js/i18n.js?v=1794736741"></script>
+<script src="/login/js/fredy-rig.js?v=1794736741"></script>
 <script>
 // ── LAZY SCRIPT LOADER ────────────────────────────────────────────
 const _loadedScripts={};
@@ -1512,7 +1513,7 @@ function applyLang(){
   // Paywall
   const _pw={pwTitle:'pw_title',pwSub:'pw_sub',pwMonthLabel:'pw_monthly',pwMonthPer:'pw_monthly_per',
     pwAnnualLabel:'pw_annual',pwAnnualPer:'pw_annual_per',pwAnnualSave:'pw_annual_save',
-    pwBadge:'pw_badge',pwMonthBtn:'pw_btn',pwAnnualBtn:'pw_btn',pwLogoutBtn:'pw_logout',
+    pwBadge:'pw_badge',pwMonthBtn:'pw_btn',pwAnnualBtn:'pw_btn',pwLogoutBtn:'pw_logout',pwWhoLbl:'pw_who',
     pwF1:'pw_f1',pwF2:'pw_f2',pwF3:'pw_f3',pwF4:'pw_f4',pwF5:'pw_f5',
     pwMB1:'pw_mb1',pwMB2:'pw_mb2',pwMB3:'pw_mb3',
     pwAB1:'pw_ab1',pwAB2:'pw_ab2',pwAB3:'pw_ab3',
@@ -5210,7 +5211,11 @@ function showPaywall(){
   const mb=document.getElementById('pwMonthBtn'), ab=document.getElementById('pwAnnualBtn');
   if(mb) mb.href=_stripeLink('monthly');
   if(ab) ab.href=_stripeLink('annual');
-  document.getElementById('paywallScreen').style.display='flex';
+  // Mostra com qual conta a pessoa entrou (ajuda a perceber conta trocada)
+  const pwW=document.getElementById('pwWho'), pwE=document.getElementById('pwWhoEmail');
+  if(pwW&&pwE){pwE.textContent=_user?.email||'';pwW.style.display=_user?.email?'':'none';}
+  const pwS=document.getElementById('paywallScreen');
+  pwS.style.display='flex';pwS.scrollTop=0;
   // Veio da landing com um plano escolhido: abre o checkout direto (uma vez)
   let chosen=null;try{chosen=sessionStorage.getItem('tf_plan');sessionStorage.removeItem('tf_plan');}catch(e){}
   if(_user&&(chosen==='monthly'||chosen==='annual')){ location.href=_stripeLink(chosen); }

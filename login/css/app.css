@@ -823,12 +823,13 @@ body.dark .confirm-delete{background:#dc2626}
 
 /* ── PAYWALL ─────────────────────────────────────────────────── */
 #paywallScreen{
-  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-  z-index:1100;padding:40px 24px;
+  position:fixed;inset:0;display:flex;align-items:flex-start;justify-content:center;
+  z-index:1100;padding:40px 24px calc(40px + env(safe-area-inset-bottom));
+  overflow-y:auto;-webkit-overflow-scrolling:touch;
   background:#060B1F;
   background-image:radial-gradient(ellipse 70% 50% at 50% -5%,rgba(37,99,255,.18) 0%,transparent 65%);
 }
-.pw-card{width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;gap:0;text-align:center}
+.pw-card{width:100%;max-width:500px;margin:auto;display:flex;flex-direction:column;align-items:center;gap:0;text-align:center}
 .pw-logo{font-size:28px;font-weight:800;letter-spacing:-1px;color:#FFFFFF}
 .pw-title{font-size:22px;font-weight:700;color:#fff;margin-top:8px}
 .pw-sub{font-size:14px;color:#A9BAD7;margin-top:4px;margin-bottom:24px}
@@ -867,12 +868,15 @@ body.dark .confirm-delete{background:#dc2626}
 }
 .pw-btn:hover{opacity:.9;transform:translateY(-1px)}
 .pw-btn:active{transform:scale(.98)}
+.pw-who{margin-top:24px;font-size:13px;color:#A9BAD7;overflow-wrap:anywhere}
+.pw-who b{color:#fff;font-weight:600}
 .pw-logout-btn{
-  margin-top:24px;background:none;border:none;color:#A9BAD7;
-  font-size:13px;cursor:pointer;text-decoration:none;padding:4px 8px;
-  transition:color .15s;
+  margin-top:10px;min-height:44px;padding:10px 18px;border-radius:12px;
+  background:none;border:1px solid rgba(255,255,255,.28);color:#fff;
+  font-size:14px;font-weight:600;font-family:inherit;cursor:pointer;
+  transition:border-color .15s,color .15s;
 }
-.pw-logout-btn:hover{color:#6E9BFF}
+.pw-logout-btn:hover{border-color:#6E9BFF;color:#6E9BFF}
 .pw-features{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 16px;margin-bottom:24px;width:100%}
 .pw-features span{display:flex;align-items:center;gap:5px;font-size:13px;color:#9ca3af}
 .pw-check{color:#4ade80;font-weight:700}
@@ -881,7 +885,7 @@ body.dark .confirm-delete{background:#dc2626}
 .pw-bullets li::before{content:'✓';position:absolute;left:0;color:#4ade80;font-weight:700}
 .pw-guarantee{font-size:11px;color:#8394BC;text-align:center;margin-top:16px}
 @media(max-width:480px){
-  #paywallScreen{padding:24px 16px}
+  #paywallScreen{padding:24px 16px calc(24px + env(safe-area-inset-bottom))}
   .pw-plans{grid-template-columns:1fr}
 }
 /* paywall bg is always #060B1F — no light-mode card overrides needed */
