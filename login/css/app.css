@@ -876,6 +876,16 @@ body.dark .confirm-delete{background:#dc2626}
 .le-card{width:100%;max-width:360px;margin:auto;display:flex;flex-direction:column;align-items:center;text-align:center}
 .le-card .pw-btn{margin-top:0;font-family:inherit}
 .le-card .pw-btn:disabled{opacity:.6}
+/* Voltou do pagamento: espera a confirmação em vez de mostrar os planos */
+.pw-paid{display:flex;flex-direction:column;align-items:center;text-align:center}
+.pw-spin{width:28px;height:28px;border-radius:50%;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;animation:pwspin .9s linear infinite;margin:20px 0 8px}
+@keyframes pwspin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.pw-spin{animation:none}}
+#paywallScreen.pw-waiting #pwTitle,#paywallScreen.pw-waiting #pwSub,#paywallScreen.pw-waiting .pw-features,
+#paywallScreen.pw-waiting .pw-plans,#paywallScreen.pw-waiting .pw-guarantee{display:none}
+.pw-paid-slow,.login-paid-note{width:100%;margin:0 0 20px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);color:#fff;font-size:14px;line-height:1.45;text-align:left;overflow-wrap:anywhere}
+.login-paid-note{margin:0 0 12px;padding:8px 12px;font-size:13px;text-align:center}
 .pw-who{margin-top:24px;font-size:13px;color:#A9BAD7;overflow-wrap:anywhere}
 .pw-who b{color:#fff;font-weight:600}
 .pw-logout-btn{

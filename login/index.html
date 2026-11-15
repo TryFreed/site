@@ -32,7 +32,7 @@ window._gsTimeout = setTimeout(function(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/login/css/app.css?v=1794759252">
+<link rel="stylesheet" href="/login/css/app.css?v=1794775372">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -119,6 +119,7 @@ window._gsTimeout = setTimeout(function(){
           <span style="font-size:20px;font-weight:800;letter-spacing:-1px;color:#FFFFFF">tryfreed</span>
         </div>
         <h2 class="dp-form-title" id="signinTitle">Entrar</h2>
+        <div class="login-paid-note" id="loginPaidNote" role="status" style="display:none"></div>
         <div class="login-error" id="loginError"></div>
         <div class="login-field">
           <label id="loginEmailLabel">EMAIL</label>
@@ -1145,6 +1146,11 @@ window._gsTimeout = setTimeout(function(){
   </div>
   <div class="pw-card">
     <div class="pw-logo">TryFreed</div>
+    <div class="pw-paid" id="pwPaid" role="status" aria-live="polite" style="display:none">
+      <div class="pw-spin" aria-hidden="true"></div>
+      <div class="pw-title" id="pwPaidTitle">Confirmando seu pagamento</div>
+      <div class="pw-sub" id="pwPaidSub">Leva só alguns segundos. O app abre sozinho.</div>
+    </div>
     <div class="pw-title" id="pwTitle">Assine para continuar</div>
     <div class="pw-sub" id="pwSub">Escolha seu plano</div>
     <div class="pw-features">
@@ -1154,6 +1160,7 @@ window._gsTimeout = setTimeout(function(){
       <span><span class="pw-check">✓</span> <span id="pwF4">Relatórios</span></span>
       <span><span class="pw-check">✓</span> <span id="pwF5">Sem anúncios</span></span>
     </div>
+    <div class="pw-paid-slow" id="pwPaidSlow" role="status" style="display:none"></div>
     <div class="pw-plans">
       <div class="pw-plan">
         <div class="pw-plan-name" id="pwMonthLabel">Mensal</div>
@@ -1300,8 +1307,8 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
-<script src="/login/js/i18n.js?v=1794759252"></script>
-<script src="/login/js/fredy-rig.js?v=1794759252"></script>
+<script src="/login/js/i18n.js?v=1794775372"></script>
+<script src="/login/js/fredy-rig.js?v=1794775372"></script>
 <script>
 // ── LAZY SCRIPT LOADER ────────────────────────────────────────────
 const _loadedScripts={};
@@ -1524,6 +1531,7 @@ function applyLang(){
   const _pw={pwTitle:'pw_title',pwSub:'pw_sub',pwMonthLabel:'pw_monthly',pwMonthPer:'pw_monthly_per',
     pwAnnualLabel:'pw_annual',pwAnnualPer:'pw_annual_per',pwAnnualSave:'pw_annual_save',
     pwBadge:'pw_badge',pwMonthBtn:'pw_btn',pwAnnualBtn:'pw_btn',pwLogoutBtn:'pw_logout',pwWhoLbl:'pw_who',
+    pwPaidTitle:'pw_paid_title',pwPaidSub:'pw_paid_sub',pwPaidSlow:'pw_paid_slow',loginPaidNote:'login_paid_note',
     pwF1:'pw_f1',pwF2:'pw_f2',pwF3:'pw_f3',pwF4:'pw_f4',pwF5:'pw_f5',
     pwMB1:'pw_mb1',pwMB2:'pw_mb2',pwMB3:'pw_mb3',
     pwAB1:'pw_ab1',pwAB2:'pw_ab2',pwAB3:'pw_ab3',
@@ -1617,6 +1625,8 @@ function showLogin(){
     if(el) el.style.display='none';
   });
   document.getElementById('loginScreen').style.display='flex';
+  {const _pn=document.getElementById('loginPaidNote'),_pp=_paidPending();if(_pn){_pn.textContent=t('login_paid_note');_pn.style.display=_pp?'':'none';}
+   const _st=document.getElementById('signinTitle');if(_st)_st.style.display=_pp?'none':'';} // o aviso ocupa o lugar do título (o cartão tem altura fixa no computador)
   {const _fab=document.getElementById('aiFab');if(_fab)_fab.style.display='none';const _ap=document.getElementById('aiPanel');if(_ap&&_ap.classList.contains('open'))aiClose();} // QA-027: deslogado, sem Fredy (initApp mostra de novo)
   // Veio da landing escolhendo um plano: abre direto no "Criar conta"
   let _hasPlan=false;try{_hasPlan=!!sessionStorage.getItem('tf_plan');}catch(e){}
@@ -1821,6 +1831,7 @@ async function handleLogout(){
     _appRunning=false;
     _launching=false;
     if(_paywallPollInterval){clearInterval(_paywallPollInterval);_paywallPollInterval=null;}
+    clearTimeout(_paidSlowTimer);_paidSlowTimer=null;
     if(_notifCheckTimeout){clearTimeout(_notifCheckTimeout);_notifCheckTimeout=null;}
     localStorage.removeItem('tryfreed_lang');
     ['homeScreen','loginScreen','resetScreen','onboardingScreen','pinScreen','pinSetupScreen','paywallScreen','appScreen'].forEach(id=>{
@@ -5219,6 +5230,40 @@ function _stripeLink(plan){
   }catch(e){}
 })();
 
+// Voltou do pagamento (/login/?paid=1, definido nos links do Stripe): mostra "confirmando" em vez dos planos.
+// É só texto: o acesso continua dependendo de profiles.subscribed, gravado pelo webhook.
+const _PAID_WAIT=60*1000;
+(function(){
+  try{
+    const q=new URLSearchParams(location.search);
+    if(q.get('paid')==='1'){
+      sessionStorage.setItem('tf_paid',String(Date.now()));
+      q.delete('paid');const qs=q.toString();
+      history.replaceState(null,'',location.pathname+(qs?'?'+qs:'')+location.hash);
+    }
+  }catch(e){}
+})();
+function _paidPending(){try{const v=+sessionStorage.getItem('tf_paid');return v>0&&Date.now()-v<600000;}catch(e){return false;}} // vale por 10 min
+function _paidClear(){try{sessionStorage.removeItem('tf_paid');}catch(e){}}
+let _paidSlowTimer=null;
+// Checagem periódica da assinatura enquanto a tela de planos está aberta
+function _startPaywallPoll(ms){
+  if(_paywallPollInterval){clearInterval(_paywallPollInterval);_paywallPollInterval=null;}
+  if(!_user) return;
+  _paywallPollInterval=setInterval(async()=>{
+    if(document.getElementById('paywallScreen')?.style.display!=='flex'){
+      clearInterval(_paywallPollInterval);_paywallPollInterval=null;return;
+    }
+    const {data}=await _supa.from('profiles').select('subscribed').eq('user_id',_user.id).single();
+    if(data?.subscribed){
+      clearInterval(_paywallPollInterval);_paywallPollInterval=null;
+      _showLoading();
+      _appRunning=false;
+      await checkSubAndLaunch(false);
+    }
+  },ms);
+}
+
 // Tela de erro quando os dados não carregam (em vez de tela vazia ou de assinatura)
 let _loadErrSkipOb=false;
 function showLoadError(skipOnboarding){
@@ -5253,20 +5298,26 @@ function showPaywall(){
   // Veio da landing com um plano escolhido: abre o checkout direto (uma vez)
   let chosen=null;try{chosen=sessionStorage.getItem('tf_plan');sessionStorage.removeItem('tf_plan');}catch(e){}
   if(_user&&(chosen==='monthly'||chosen==='annual')){ location.href=_stripeLink(chosen); }
-  // Polling: detecta automaticamente quando o webhook do Stripe confirma o pagamento
-  if(_user && !_paywallPollInterval){
-    _paywallPollInterval=setInterval(async()=>{
-      if(document.getElementById('paywallScreen')?.style.display!=='flex'){
-        clearInterval(_paywallPollInterval);_paywallPollInterval=null;return;
-      }
-      const {data}=await _supa.from('profiles').select('subscribed').eq('user_id',_user.id).single();
-      if(data?.subscribed){
-        clearInterval(_paywallPollInterval);_paywallPollInterval=null;
-        _showLoading();
-        _appRunning=false;
-        await checkSubAndLaunch(false);
-      }
-    },5000);
+  // Voltou do pagamento: esconde os planos e espera a confirmação (checa a cada 2 s por até 1 minuto)
+  const paid=!!_user&&_paidPending();
+  const pwP=document.getElementById('pwPaid'), pwSl=document.getElementById('pwPaidSlow');
+  pwS.classList.toggle('pw-waiting',paid);
+  if(pwP) pwP.style.display=paid?'flex':'none';
+  if(pwSl) pwSl.style.display='none'; // só o timer abaixo volta a mostrar (outra conta não herda o aviso)
+  if(paid){
+    clearTimeout(_paidSlowTimer);
+    _paidSlowTimer=setTimeout(()=>{
+      _paidSlowTimer=null;_paidClear();
+      if(pwS.style.display!=='flex'||!pwS.classList.contains('pw-waiting')) return;
+      pwS.classList.remove('pw-waiting');
+      if(pwP) pwP.style.display='none';
+      if(pwSl){pwSl.textContent=t('pw_paid_slow');pwSl.style.display='';}
+      _startPaywallPoll(5000);
+    },_PAID_WAIT);
+    _startPaywallPoll(2000);
+  } else if(_user && !_paywallPollInterval){
+    // Polling: detecta automaticamente quando o webhook do Stripe confirma o pagamento
+    _startPaywallPoll(5000);
   }
 }
 
@@ -5285,11 +5336,14 @@ async function checkSubAndLaunch(skipOnboarding=false){
     }
     if(_appRunning){_hideLoading();return;}
     if(!window._profile?.subscribed){showPaywall();return;}
+    const _wasPaid=_paidPending();
+    if(_wasPaid){_paidClear();clearTimeout(_paidSlowTimer);_paidSlowTimer=null;}
     if(!skipOnboarding&&obIsFirstTime()){
       _hideLoading();obStart();_appRunning=true;return;
     }
     initApp(); // builds all content, then _hideLoading(), then showTab('home')
     _appRunning=true;
+    if(_wasPaid) _showToast(t('pw_paid_ok'),'#16a34a');
   } catch(e){
     console.error('[checkSubAndLaunch] erro:',e);
     _hideLoading();
