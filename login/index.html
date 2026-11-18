@@ -32,7 +32,7 @@ window._gsTimeout = setTimeout(function(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/login/css/app.css?v=1794852530">
+<link rel="stylesheet" href="/login/css/app.css?v=1795006978">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -1192,6 +1192,10 @@ window._gsTimeout = setTimeout(function(){
       </div>
     </div>
     <div class="pw-guarantee"><svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg> <span id="pwGuarantee">Pagamento seguro via Stripe · Cancele a qualquer momento</span></div>
+    <div class="pw-had" id="pwHad" style="display:none">
+      <div class="pw-had-txt" id="pwHadTxt">Já assinou antes? Veja sua assinatura primeiro, para não pagar duas vezes.</div>
+      <button class="pw-logout-btn" id="pwHadBtn" onclick="openBillingPortal()">Gerenciar assinatura</button>
+    </div>
     <div class="pw-who" id="pwWho" style="display:none"><span id="pwWhoLbl">Você entrou como</span> <b id="pwWhoEmail"></b></div>
     <button class="pw-logout-btn" id="pwLogoutBtn" onclick="_supa.auth.signOut()">Entrar com outra conta</button>
   </div>
@@ -1307,8 +1311,8 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
-<script src="/login/js/i18n.js?v=1794852530"></script>
-<script src="/login/js/fredy-rig.js?v=1794852530"></script>
+<script src="/login/js/i18n.js?v=1795006978"></script>
+<script src="/login/js/fredy-rig.js?v=1795006978"></script>
 <script>
 // ── LAZY SCRIPT LOADER ────────────────────────────────────────────
 const _loadedScripts={};
@@ -1530,7 +1534,7 @@ function applyLang(){
   // Paywall
   const _pw={pwTitle:'pw_title',pwSub:'pw_sub',pwMonthLabel:'pw_monthly',pwMonthPer:'pw_monthly_per',
     pwAnnualLabel:'pw_annual',pwAnnualPer:'pw_annual_per',pwAnnualSave:'pw_annual_save',
-    pwBadge:'pw_badge',pwMonthBtn:'pw_btn',pwAnnualBtn:'pw_btn',pwLogoutBtn:'pw_logout',pwWhoLbl:'pw_who',
+    pwBadge:'pw_badge',pwMonthBtn:'pw_btn',pwAnnualBtn:'pw_btn',pwLogoutBtn:'pw_logout',pwWhoLbl:'pw_who',pwHadTxt:'pw_had',pwHadBtn:'drawer_billing',
     pwPaidTitle:'pw_paid_title',pwPaidSub:'pw_paid_sub',pwPaidSlow:'pw_paid_slow',loginPaidNote:'login_paid_note',
     pwF1:'pw_f1',pwF2:'pw_f2',pwF3:'pw_f3',pwF4:'pw_f4',pwF5:'pw_f5',
     pwMB1:'pw_mb1',pwMB2:'pw_mb2',pwMB3:'pw_mb3',
@@ -5293,6 +5297,15 @@ function showPaywall(){
   // Mostra com qual conta a pessoa entrou (ajuda a perceber conta trocada)
   const pwW=document.getElementById('pwWho'), pwE=document.getElementById('pwWhoEmail');
   if(pwW&&pwE){pwE.textContent=_user?.email||'';pwW.style.display=_user?.email?'':'none';}
+  // Já tem cliente no Stripe (assinou antes): oferece o portal, para não assinar em duplicidade.
+  const pwH=document.getElementById('pwHad');
+  if(pwH){
+    pwH.style.display='none';
+    const uid=_user?.id;
+    if(uid) _supa.from('profiles').select('stripe_customer_id').eq('user_id',uid).maybeSingle().then(({data})=>{
+      if(_user?.id===uid&&typeof data?.stripe_customer_id==='string'&&data.stripe_customer_id.startsWith('cus_')) pwH.style.display='';
+    },()=>{});
+  }
   const pwS=document.getElementById('paywallScreen');
   pwS.style.display='flex';pwS.scrollTop=0;
   // Veio da landing com um plano escolhido: abre o checkout direto (uma vez)
