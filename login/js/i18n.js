@@ -33,6 +33,12 @@ const TRANSLATIONS = {
     renda_empty:'Nenhuma renda cadastrada ainda.<br>Use o formulário acima para adicionar.',
     renda_recurring:'Rendas recorrentes', renda_unique:'Rendas únicas',
     type_weekly:'Semanal', type_monthly:'Mensal', type_once:'Única vez', type_biweekly:'2x por mês', type_every2w:'A cada 2 semanas',
+    // Tipo Anual (textos aprovados pela dupla da voz em 19/11/2026)
+    type_yearly:'Anual', dayedit_month:'Mês', yearly_month_pick:'Escolha o mês', field_err_month:'Escolha o mês.', yearly_lastday:'último dia',
+    yearly_every:(d,m)=>`Todo ano · ${d} ${m}`,
+    sp_yearly1:(n,v,d)=>`Inclui ${n} (${v}), conta anual que vence ${d}.`,
+    sp_yearlyN:(k,v,d)=>`Inclui ${k} contas anuais (${v}) até ${d}.`,
+    ai_yearly_form:'Não consigo anotar conta ou renda anual por aqui. Use o formulário e escolha o tipo Anual.',
     day_label:'Todo dia', dow_label:'Todo',
     // Bills section
     bills_form_title:'Adicionar despesa',
@@ -462,6 +468,12 @@ const TRANSLATIONS = {
     renda_empty:'No income added yet.<br>Use the form above to add one.',
     renda_recurring:'Recurring income', renda_unique:'One-time income',
     type_weekly:'Weekly', type_monthly:'Monthly', type_once:'One-time', type_biweekly:'Twice a month', type_every2w:'Every 2 weeks',
+    // Yearly type (copy approved by the voice pair on 2026-11-19)
+    type_yearly:'Yearly', dayedit_month:'Month', yearly_month_pick:'Pick the month', field_err_month:'Pick the month.', yearly_lastday:'last day',
+    yearly_every:(d,m)=>`Every year · ${m} ${d}`,
+    sp_yearly1:(n,v,d)=>`Includes ${n} (${v}), a yearly bill due ${d}.`,
+    sp_yearlyN:(k,v,d)=>`Includes ${k} yearly bills (${v}) through ${d}.`,
+    ai_yearly_form:"I can't add yearly bills or income in chat. Use the form and pick the Yearly type.",
     day_label:'Every day', dow_label:'Every',
     bills_form_title:'Add expense',
     bills_name_label:'Name', bills_name_ph:'e.g. Gym',

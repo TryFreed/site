@@ -32,7 +32,7 @@ window._gsTimeout = setTimeout(function(){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/login/css/app.css?v=1795105533">
+<link rel="stylesheet" href="/login/css/app.css?v=1795118613">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
@@ -748,18 +748,20 @@ window._gsTimeout = setTimeout(function(){
             <label id="re-day-label" data-i18n="renda_day_label">Dia</label>
             <input id="re-day" type="number" min="1" max="31" placeholder="1–31" inputmode="numeric">
             <input id="re-next" type="date" style="display:none">
+            <select id="re-month" style="display:none;margin-top:4px"></select>
             <div id="re-day2-wrap" style="display:none;margin-top:4px">
               <label style="font-size:11px;color:var(--sub)" data-i18n="dayedit_pay2">2º pagamento</label>
               <input id="re-day2" type="number" min="1" max="31" placeholder="1–31" inputmode="numeric">
             </div>
           </div>
-          <div><label data-i18n="renda_monthyear_label">Mês/Ano (única ou início)</label><input id="re-monthyear" type="month" value=""></div>
+          <div id="re-monthyear-wrap"><label data-i18n="renda_monthyear_label">Mês/Ano (única ou início)</label><input id="re-monthyear" type="month" value=""></div>
           <div><label data-i18n="renda_type_label">Tipo</label>
             <select id="re-type" onchange="onRendaTypeChange(this.value)">
               <option value="monthly" data-i18n="type_monthly">Mensal</option>
               <option value="biweekly" data-i18n="type_biweekly">2x por mês</option>
               <option value="every2w" data-i18n="type_every2w">A cada 2 semanas</option>
               <option value="weekly" data-i18n="type_weekly">Semanal</option>
+              <option value="yearly" data-i18n="type_yearly">Anual</option>
               <option value="once" data-i18n="type_once">Única vez</option>
             </select>
           </div>
@@ -786,8 +788,8 @@ window._gsTimeout = setTimeout(function(){
         <div class="frow6">
           <div><label data-i18n="bills_name_label">Nome</label><input id="f-name" placeholder="ex: Academia" maxlength="60"></div>
           <div><label data-i18n="bills_val_label">Valor ($)</label><input id="f-val" type="text" placeholder="0" inputmode="decimal"></div>
-          <div><label id="f-day-label" data-i18n="bills_day_label">Dia</label><input id="f-day" type="number" min="1" max="31" placeholder="1–31" inputmode="numeric"><select id="f-dow" style="display:none"></select><div id="f-day2-wrap" style="display:none;margin-top:4px"><label style="font-size:11px;color:var(--sub)" data-i18n="bills_day2_label">2º vencimento</label><input id="f-day2" type="number" min="1" max="31" placeholder="1–31" inputmode="numeric"></div></div>
-          <div><label data-i18n="bills_monthyear_label">Mês/Ano (única)</label><input id="f-monthyear" type="month" value="2026-05"></div>
+          <div><label id="f-day-label" data-i18n="bills_day_label">Dia</label><input id="f-day" type="number" min="1" max="31" placeholder="1–31" inputmode="numeric"><select id="f-dow" style="display:none"></select><select id="f-month" style="display:none;margin-top:4px"></select><div id="f-day2-wrap" style="display:none;margin-top:4px"><label style="font-size:11px;color:var(--sub)" data-i18n="bills_day2_label">2º vencimento</label><input id="f-day2" type="number" min="1" max="31" placeholder="1–31" inputmode="numeric"></div></div>
+          <div id="f-monthyear-wrap"><label data-i18n="bills_monthyear_label">Mês/Ano (única)</label><input id="f-monthyear" type="month" value="2026-05"></div>
           <div><label data-i18n="bills_type_label">Tipo</label>
             <select id="f-type" onchange="onBillTypeChange(this.value)">
               <option value="monthly" data-i18n="type_monthly">Mensal</option>
@@ -795,6 +797,7 @@ window._gsTimeout = setTimeout(function(){
               <option value="once" data-i18n="type_once">Única vez</option>
               <option value="extra" data-i18n="type_extra">Parcela</option>
               <option value="weekly" data-i18n="type_weekly">Semanal</option>
+              <option value="yearly" data-i18n="type_yearly">Anual</option>
             </select>
           </div>
           <div><label data-i18n="bills_cat_label">Categoria</label>
@@ -1311,8 +1314,8 @@ window._gsTimeout = setTimeout(function(){
   </div>
 </div>
 
-<script src="/login/js/i18n.js?v=1795105533"></script>
-<script src="/login/js/fredy-rig.js?v=1795105533"></script>
+<script src="/login/js/i18n.js?v=1795118613"></script>
+<script src="/login/js/fredy-rig.js?v=1795118613"></script>
 <script>
 // ── LAZY SCRIPT LOADER ────────────────────────────────────────────
 const _loadedScripts={};
@@ -2168,6 +2171,7 @@ function totalMonthly(excludeMetas){
     if(_endedOn(b,n)) return;
     if(b.type==='monthly'||b.type==='extra') t+=b.val;
     if(b.type==='biweekly') t+=Number(b.val)*(b.day2?2:1); // 2x por mês: sem 2º dia = 1 vez
+    if(b.type==='yearly') t+=Number(b.val)/12; // anual: 1/12 por mês na média
     if(b.type==='weekly'&&!(excludeMetas&&b.metaId)) t+=b.val*WPM;
   });
   t+=_debtMonthlyMin(); // D2: mínimo das dívidas no plano
@@ -2222,6 +2226,7 @@ function _rendaHit(r,date){
   if(r.type==='monthly') return _dayHit(r.day,d,y,m);
   if(r.type==='biweekly') return _dayHit(r.day,d,y,m)||_dayHit(r.day2,d,y,m);
   if(r.type==='every2w') return _e2wHit(r,date);
+  if(r.type==='yearly') return r.month!=null&&r.month!==''&&m===Number(r.month)&&_dayHit(r.day,d,y,m);
   return false;
 }
 // Uma conta vence nesta data? (início, fim, pausa, tipo e fim da meta)
@@ -2236,6 +2241,7 @@ function _billHit(b,date){
   if(b.type==='biweekly') return _dayHit(b.day,d,y,m)||_dayHit(b.day2,d,y,m);
   if(b.type==='once') return b.year===y&&b.month===m&&b.day===d;
   if(b.type==='weekly') return date.getDay()===b.day&&(!b.metaEnd||date<=_metaEndDate(b.metaEnd));
+  if(b.type==='yearly') return b.month!=null&&b.month!==''&&m===Number(b.month)&&_dayHit(b.day,d,y,m);
   return false;
 }
 // Para "Parar a partir de" e para o Fredy. kind: 'renda' | 'bill'
@@ -2261,7 +2267,7 @@ function getEventsForDate(date,isFirstWeek){
   const evs=[];
   // Recorrente só aparece entre start_date e end_date (inclusivos); sem datas: igual a antes
   rendas.forEach(r=>{
-    if(_rendaHit(r,date)) evs.push({l:'+$'+r.val+' '+r.name,t:'i',a:r.val,src:r.name});
+    if(_rendaHit(r,date)) evs.push({l:'+$'+r.val+' '+r.name,t:'i',a:r.val,src:r.name,...(r.type==='yearly'?{yr:true}:{})});
   });
   bills.forEach(b=>{
     if(_billHit(b,date)) evs.push({l:'-$'+b.val+' '+b.name,t:b.type==='extra'?'pp':b.type==='once'?'u':'o',a:-b.val,cat:b.cat,id:b.id,nm:b.name,meta:!!b.metaId});
@@ -2311,6 +2317,13 @@ function _mesHasOverdue(bs,now){
   const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
   return (bs||[]).some(b=>{
     if(b.type==='once'||b.type==='weekly'||b.metaId||!b.day) return false;
+    if(b.type==='yearly'){ // anual: só no mês dela; dia 99 ou maior que o mês = último dia
+      if(b.month==null||b.month===''||Number(b.month)!==t0.getMonth()) return false;
+      const _last=new Date(t0.getFullYear(),t0.getMonth()+1,0).getDate(),_dd=(Number(b.day)===99||Number(b.day)>_last)?_last:Number(b.day);
+      const dueY=new Date(t0.getFullYear(),t0.getMonth(),_dd);
+      if(dueY>=t0||!_billHit(b,dueY)) return false;
+      return !(b.pagamentos||[]).some(pg=>pg.year===t0.getFullYear()&&pg.month===t0.getMonth());
+    }
     const due=new Date(t0.getFullYear(),t0.getMonth(),Number(b.day));
     if(due>=t0||_endedOn(b,due)) return false;
     return !(b.pagamentos||[]).some(pg=>pg.year===t0.getFullYear()&&pg.month===t0.getMonth());
@@ -2388,16 +2401,17 @@ function _cbStep(d,bal,adj){
   return bal;
 }
 // Atrasada: recorrente (não única, não meta), sem marca, venceu entre max(início, hoje-31) e ontem, e depois da data do saldo (antes dela = presumida paga: só perguntar). Dias por data de calendário.
-function _mesLateLo(now,startD){const a=new Date(now.getFullYear(),now.getMonth(),now.getDate()-31);if(!startD)return a;const s=new Date(startD.getFullYear(),startD.getMonth(),startD.getDate());return s>a?s:a;}
-function _mesIsLate(b,d,t0,lo,D){return !!b&&!b.metaId&&b.type!=='once'&&b.type!=='weekly'&&d<t0&&d>=lo&&(!D||_dateToStr(d)>D);}
+function _mesLateLo(now,startD,days){const a=new Date(now.getFullYear(),now.getMonth(),now.getDate()-(days||31));if(!startD)return a;const s=new Date(startD.getFullYear(),startD.getMonth(),startD.getDate());return s>a?s:a;}
+function _mesIsLate(b,d,t0,lo,D,lo60){return !!b&&!b.metaId&&b.type!=='once'&&b.type!=='weekly'&&d<t0&&d>=(b.type==='yearly'&&lo60?lo60:lo)&&(!D||_dateToStr(d)>D);}
 // Lista para "Já pagou?": toda ocorrência recorrente sem marca entre max(início, hoje-31) e ontem; late = atrasada de verdade
 function _mesAskList(bs,now,D,startD){
-  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),lo=_mesLateLo(t0,startD),out=[];
-  for(let d=new Date(lo.getFullYear(),lo.getMonth(),lo.getDate());d<t0;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)){
+  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),lo=_mesLateLo(t0,startD),lo60=_mesLateLo(t0,startD,60),out=[];
+  for(let d=new Date(lo60.getFullYear(),lo60.getMonth(),lo60.getDate());d<t0;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)){
     (bs||[]).forEach(b=>{
       if(!b||b.metaId||b.type==='once'||b.type==='weekly'||!_billHit(b,d)) return;
+      if(b.type!=='yearly'&&d<lo) return; // só a anual olha 60 dias para trás
       if((b.pagamentos||[]).some(p=>p&&p.paid&&p.year===d.getFullYear()&&p.month===d.getMonth()&&p.day===d.getDate())) return;
-      out.push({id:b.id,name:b.name,val:Number(b.val)||0,date:new Date(d),ds:_dateToStr(d),late:_mesIsLate(b,d,t0,lo,D)});
+      out.push({id:b.id,name:b.name,val:Number(b.val)||0,date:new Date(d),ds:_dateToStr(d),late:_mesIsLate(b,d,t0,lo,D,lo60)});
     });
   }
   return out;
@@ -2414,7 +2428,7 @@ function _mesPaidOn(bs,dayS){
 }
 // Relatório: contas por vencimento entre from e to (Date 00:00). paid = com marca; pres = já venceu sem marca e não é atrasada (presumida paga); late = atrasada; due = hoje em diante; meta = Guardar das metas (à parte). Centavos.
 function _mesRepBills(bs,from,to,now,D,startD){
-  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),lo=_mesLateLo(t0,startD),r={paidC:0,presC:0,lateC:0,dueC:0,metaC:0,late:[]};
+  const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),lo=_mesLateLo(t0,startD),lo60=_mesLateLo(t0,startD,60),r={paidC:0,presC:0,lateC:0,dueC:0,metaC:0,late:[]};
   for(let d=new Date(from.getFullYear(),from.getMonth(),from.getDate());d<=to;d=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1)){
     (bs||[]).forEach(b=>{
       if(!b||!_billHit(b,d)) return;
@@ -2422,7 +2436,7 @@ function _mesRepBills(bs,from,to,now,D,startD){
       if(b.metaId){r.metaC+=c;return;}
       if((b.pagamentos||[]).some(p=>p&&p.paid&&p.year===d.getFullYear()&&p.month===d.getMonth()&&p.day===d.getDate())){r.paidC+=c;return;}
       if(d>=t0){r.dueC+=c;return;}
-      if(_mesIsLate(b,d,t0,lo,D)){r.lateC+=c;r.late.push({id:b.id,name:b.name,val:c/100,date:new Date(d)});return;}
+      if(_mesIsLate(b,d,t0,lo,D,lo60)){r.lateC+=c;r.late.push({id:b.id,name:b.name,val:c/100,date:new Date(d)});return;}
       r.presC+=c;
     });
   }
@@ -2486,7 +2500,7 @@ function computeSepare(){
   for(let i=0;i<30;i++){
     const d=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+i);
     let inDayC=0;
-    getEventsForDate(d,false).forEach(e=>{const a=Number(e.a)||0;if(a>0)inDayC+=Math.round(a*100);else if(a<0&&!(e.debt&&e.paid))outByC+=Math.round(-a*100);}); // QA-055: pagamento de dívida já feito não é conta a separar
+    getEventsForDate(d,false).forEach(e=>{const a=Number(e.a)||0;if(a>0){if(!e.yr)inDayC+=Math.round(a*100);}else if(a<0&&!(e.debt&&e.paid))outByC+=Math.round(-a*100);}); // QA-055: pagamento de dívida já feito não é conta a separar
     inByC+=inDayC;
     if(inDayC>0&&!next){next=d;rendaNext=inDayC/100;iNext=i;}
   }
@@ -2506,6 +2520,7 @@ function computeSepare(){
   rendas.forEach(r=>{
     const v=Math.round((Number(r.val)||0)*100)/100;
     if(r.type==='once'){if(inWin(r)){renda+=v;if(cas)cpR.push([r,v]);}return;}
+    if(r.type==='yearly')return; // Anual: renda anual fica fora do Separe (continua no Calendário e no plano)
     if(!on(r))return;
     if(r.end_date&&r.end_date<t0s)return;
     // Renda que para dentro da janela: só os pagamentos reais até o fim (não planejar com dinheiro que não vem)
@@ -2526,17 +2541,18 @@ function computeSepare(){
   for(let i=0;i<iNext;i++){const d=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+i);getEventsForDate(d,false).forEach(e=>{if(e.debt&&!e.paid&&Number(e.a)<0)bAntes.push({id:'debt:'+e.debtId,name:e.nm,val:-Number(e.a),cat:'divida',date:d,days:i});});} // QA-058: parcela de dívida que vence antes do pagamento
   bAntes.sort((x,y)=>x.days-y.days);
   const bAntesSum=bAntes.reduce((s,b)=>s+Math.round(b.val*100),0)/100;
+  const yearlyIn=[];for(let i=0;i<30;i++){const d=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+i);bills.forEach(b=>{if(b.type==='yearly'&&_billHit(b,d))yearlyIn.push({id:b.id,name:b.name,val:Number(b.val)||0,date:d});});} // Anual: linha de explicação na Home
   let cpS=null; // Casal C2: Separe por pessoa (só casado; erro aqui = card da casa, como antes)
   if(cas){try{
     const ms=typeof metas!=='undefined'?metas:[],its=[];
     const dated=(hit,x)=>{const c=Math.round((Number(x.val)||0)*100);let by=0,nC=0;if(c>0)for(let i=0;i<30;i++){if(hit(x,new Date(t0.getFullYear(),t0.getMonth(),t0.getDate()+i))){by+=c;if(i===iNext)nC+=c;}}return [by,nC];};
     const avgOf=(L,x)=>{const f=L.find(y=>y[0]===x);return f?f[1]:0;};
-    rendas.forEach(r=>{const d=dated(_rendaHit,r);its.push({k:'in',o:_effOwner(r,ms,true),byC:d[0],avg:avgOf(cpR,r),nextC:d[1],once:r.type==='once'});});
+    rendas.forEach(r=>{if(r.type==='yearly')return;const d=dated(_rendaHit,r);its.push({k:'in',o:_effOwner(r,ms,true),byC:d[0],avg:avgOf(cpR,r),nextC:d[1],once:r.type==='once'});});
     bills.forEach(b=>{const d=dated(_billHit,b);its.push({k:'out',o:_effOwner(b,ms,true),byC:d[0],avg:avgOf(cpB,b),nextC:0,g:!!b.metaId});});
     _dv.forEach(dv=>{if(!dv||dv.no_plano!==true)return;let by=0;_debtSchedule(dv,t0s,lims).forEach(e=>{if(!e.late)by+=Math.round(e.amount*100);});its.push({k:'out',o:_effOwner(dv,ms,true),byC:by,avg:avgOf(cpB,dv),nextC:0,g:false});});
     cpS=_coupleSepare(its,_coupleShare(rendas,t0,true));
   }catch(e){console.error('[separe casal]',e);cpS=null;}}
-  return {noIncome:false,contas,renda,next,rendaNext,separe,resto,tight,falta_mes,diff:(pk.rC-pk.cC)/100,exact:sp.exact,capped:sp.capped,from:t0,to:lim,bAntes,bAntesSum,showResto:!tight&&!bAntes.length,isToday:iNext===0,weekly:weeklyNext,...(cpS?{couple:cpS}:{})};
+  return {noIncome:false,contas,renda,next,rendaNext,separe,resto,tight,falta_mes,diff:(pk.rC-pk.cC)/100,exact:sp.exact,capped:sp.capped,from:t0,to:lim,bAntes,bAntesSum,showResto:!tight&&!bAntes.length,isToday:iNext===0,weekly:weeklyNext,...(yearlyIn.length?{yearlyIn}:{}),...(cpS?{couple:cpS}:{})};
 }
 function _spDay(d){const dd=d.getDate(),mm=d.getMonth()+1;return DAYS_SHORT(d.getDay())+' '+(lang==='en'?mm+'/'+dd:dd+'/'+mm);}
 // ── PLANO DO FREDY QUANDO FALTA (só sugere; nunca grava nada) ──
@@ -2675,6 +2691,7 @@ function renderSepare(){
         <div>${r.capped?t('sp_calc_cap')(fmt(r.exact),fmt(r.separe)):t('sp_calc_round')(fmt(r.exact),fmt(r.separe))}</div>
         <div>${t('sp_calc_how')}</div></details>`;
     if(r.couple&&r.couple.people.length) top=_spCoupleTop(r,day);
+    if(r.yearlyIn&&r.yearlyIn.length){const Y=r.yearlyIn;const yTxt=Y.length===1?t('sp_yearly1')(esc(Y[0].name),fmt(Y[0].val),fmtDateShort(Y[0].date)):t('sp_yearlyN')(Y.length,fmt(Y.reduce((s,x)=>s+Math.round(x.val*100),0)/100),fmtDateShort(Y[Y.length-1].date));if(r.couple&&r.couple.people.length)top+=`<div class="sp-sub">${yTxt}</div>`;else top=top.replace(/<\/div>(\s*<details class="sp-calc">)/,(m,g)=>' '+yTxt+'</div>'+g);} // Anual: explica por que o Separe subiu (solo: dentro do sp-sub, antes do details)
     if(r.tight){
       say=t('sp_say_tight2');face='think';
       acts=`<button type="button" class="sp-act primary" onclick="showTab('bills')">${t('sp_act_pause')}</button><button type="button" class="sp-act" onclick="spTalk()">${t('sp_act_talk')}</button>`;
@@ -3072,8 +3089,8 @@ function buildRendaList(){
   list.innerHTML='';
   const _d0=_t0();
   const rec=rendas.filter(r=>r.type!=='once'&&!_endedOn(r,_d0)).sort((a,b)=>{
-    const da=(a.type==='weekly'||a.type==='every2w')?Number(a.dow||0):Number(a.day||1);
-    const db=(b.type==='weekly'||b.type==='every2w')?Number(b.dow||0):Number(b.day||1);
+    const da=(a.type==='weekly'||a.type==='every2w')?Number(a.dow||0):a.type==='yearly'?100+Number(a.month||0)*31+(Number(a.day===99?31:a.day)||1):Number(a.day||1);
+    const db=(b.type==='weekly'||b.type==='every2w')?Number(b.dow||0):b.type==='yearly'?100+Number(b.month||0)*31+(Number(b.day===99?31:b.day)||1):Number(b.day||1);
     return da-db;
   });
   const uni=rendas.filter(r=>r.type==='once').sort((a,b)=>new Date(a.year,a.month,a.day)-new Date(b.year,b.month,b.day));
@@ -3098,13 +3115,14 @@ function buildRendaList(){
 
 function makeRendaRow(r){
   const row=document.createElement('div');row.className='row';
-  const tmap={weekly:['bw',t('type_weekly')],every2w:['bw',t('type_every2w')],biweekly:['bm',t('type_biweekly')],monthly:['bm',t('type_monthly')],once:['bu',t('type_once')]};
+  const tmap={weekly:['bw',t('type_weekly')],every2w:['bw',t('type_every2w')],biweekly:['bm',t('type_biweekly')],monthly:['bm',t('type_monthly')],once:['bu',t('type_once')],yearly:['bu',t('type_yearly')]};
   const [bc,bl]=tmap[r.type]||['bm',t('type_monthly')];
   let dl='';
   if(r.type==='weekly') dl=`${t('dow_label')} ${DAYS_PT(r.dow)}`;
   else if(r.type==='monthly') dl=`${t('day_label')} ${r.day}`;
   else if(r.type==='biweekly') dl=`Dias ${r.day}${r.day2?' e '+r.day2:''}`;
   else if(r.type==='every2w'){const nx=_e2wNextLive(r,new Date());dl=`${DAYS_PT(Number(r.dow))}${nx?' · '+t('renda_next_short')+' '+nx.getDate()+'/'+MS(nx.getMonth()):''}`;}
+  else if(r.type==='yearly') dl=t('yearly_every')(Number(r.day)===99?t('yearly_lastday'):r.day,(r.month==null||r.month==='')?'?':MS(Number(r.month)));
   else dl=`${r.day}/${MS(r.month)}/${r.year}`;
   row.innerHTML=`
     <div>
@@ -3169,7 +3187,7 @@ function _removeRendaForever(id,fresh){
 let _endCtx=null;
 function _t0(){const d=new Date();d.setHours(0,0,0,0);return d;}
 function _nextHitAfter(kind,x,after){const y={...x,end_date:null};for(let i=1;i<=400;i++){const d=new Date(after.getFullYear(),after.getMonth(),after.getDate()+i);if(_itemHit(kind,y,d))return d;}return null;}
-function _moEquiv(kind,x){const v=Number(x.val)||0;if(kind==='bill')return x.type==='weekly'?v*52/12:(x.type==='monthly'||x.type==='extra')?v:x.type==='biweekly'?v*(x.day2?2:1):0;return x.type==='weekly'?v*52/12:x.type==='every2w'?v*26/12:x.type==='biweekly'?v*(x.day2?2:1):x.type==='monthly'?v:0;}
+function _moEquiv(kind,x){const v=Number(x.val)||0;if(kind==='bill')return x.type==='weekly'?v*52/12:(x.type==='monthly'||x.type==='extra')?v:x.type==='biweekly'?v*(x.day2?2:1):x.type==='yearly'?v/12:0;return x.type==='weekly'?v*52/12:x.type==='every2w'?v*26/12:x.type==='biweekly'?v*(x.day2?2:1):x.type==='monthly'?v:0;}
 function _endItem(){if(!_endCtx)return null;return (_endCtx.kind==='renda'?rendas:bills).find(z=>z.id===_endCtx.id)||null;}
 function openEndModal(kind,id){
   const x=(kind==='renda'?rendas:bills).find(z=>z.id===id);if(!x)return;
@@ -3278,21 +3296,28 @@ function onRendaTypeChange(type){
   const lbl=document.getElementById('re-day-label');
   const dayInp=document.getElementById('re-day');
   const nextInp=document.getElementById('re-next');
+  const mSel=document.getElementById('re-month'),myW=document.getElementById('re-monthyear-wrap');
   const isBi=type==='biweekly';
   const isE2=type==='every2w';
+  const isYr=type==='yearly';
   if(wrap) wrap.style.display=isBi?'':'none';
   if(dayInp) dayInp.style.display=isE2?'none':'';
   if(nextInp) nextInp.style.display=isE2?'':'none';
+  if(mSel){mSel.innerHTML=`<option value="">${t('yearly_month_pick')}</option>`+t('months_long').map((m,i)=>`<option value="${i}">${m}</option>`).join('');mSel.value='';mSel.setAttribute('aria-label',t('dayedit_month'));mSel.style.display=isYr?'':'none';} // Anual: mês sem pré-seleção
+  if(myW) myW.style.display=isYr?'none':'';
   if(lbl) lbl.textContent=isE2?t('renda_next_pay'):isBi?(lang==='en'?'1st payment':'1º pagamento'):(lang==='en'?'Day':'Dia');
 }
 
 // Despesa semanal: o dia é da semana (b.day = 0..6, domingo = 0); as outras usam dia do mês 1–31
 function onBillTypeChange(type){
-  const wk=type==='weekly',bi=type==='biweekly';
+  const wk=type==='weekly',bi=type==='biweekly',yr=type==='yearly';
   const dayInp=document.getElementById('f-day'),dow=document.getElementById('f-dow'),lbl=document.getElementById('f-day-label'),w2=document.getElementById('f-day2-wrap');
+  const mSel=document.getElementById('f-month'),myW=document.getElementById('f-monthyear-wrap');
   document.querySelectorAll('#billsForm .money-err').forEach(e=>e.remove());
   document.querySelectorAll('#billsForm [aria-invalid]').forEach(e=>e.removeAttribute('aria-invalid'));
   if(dow){const keep=dow.value;dow.innerHTML=`<option value="">${t('field_dow_pick')}</option>`+t('days_long').map((d,i)=>`<option value="${i}">${d}</option>`).join('');dow.value=keep;dow.style.display=wk?'':'none';}
+  if(mSel){mSel.innerHTML=`<option value="">${t('yearly_month_pick')}</option>`+t('months_long').map((m,i)=>`<option value="${i}">${m}</option>`).join('');mSel.value='';mSel.setAttribute('aria-label',t('dayedit_month'));mSel.style.display=yr?'':'none';} // Anual: mês sem pré-seleção
+  if(myW) myW.style.display=yr?'none':'';
   if(dayInp) dayInp.style.display=wk?'none':'';
   if(w2) w2.style.display=bi?'':'none';
   if(lbl) lbl.textContent=wk?t('dayedit_dow'):bi?t('bills_day1_label'):t('bills_day_label');
@@ -3309,6 +3334,8 @@ async function addRenda(){
   const day=type==='every2w'?1:_validDay(dayEl.value);
   if(day===null){_fieldBad(dayEl,t('field_err_day'));return;}
   if(type==='biweekly'&&_validDay(day2El.value)===null){_fieldBad(day2El,t('field_err_day'));return;}
+  const mEl=document.getElementById('re-month');
+  if(type==='yearly'&&(!mEl||mEl.value==null||mEl.value===''||isNaN(Number(mEl.value)))){_fieldBad(mEl,t('field_err_month'));return;}
   const nextStr=type==='every2w'?(document.getElementById('re-next').value||''):'';
   if(type==='every2w'&&!/^\d{4}-\d{2}-\d{2}$/.test(nextStr)){_fieldBad(document.getElementById('re-next'),t('renda_next_pay_req'));return;}
   const dup=rendas.some(r=>String(r.name||'').trim().toLowerCase()===name.toLowerCase()&&Number(r.val)===Number(val)&&!(r.end_date&&r.end_date<_dateToStr(new Date()))); // QA-048: duplicata só avisa
@@ -3321,6 +3348,7 @@ async function addRenda(){
   const startStr=`${startD.getFullYear()}-${String(startD.getMonth()+1).padStart(2,'0')}-${String(startD.getDate()).padStart(2,'0')}`;
   const nr={id:newId(),name,val,day,day2,month:mo-1,year:yr,type,locked:false,dow:type==='weekly'?startD.getDay():5,owner:window._rendaOwner||'user'};
   if(type!=='once') nr.start_date=startStr;
+  if(type==='yearly'){nr.month=Number(mEl.value);nr.start_date=_dateToStr(new Date());} // anual: mês escolhido; renda nova começa hoje
   // a cada 2 semanas: o próximo pagamento escolhido é a âncora; dia da semana vem dele
   if(type==='every2w'){const p=nextStr.split('-').map(Number);const a=new Date(p[0],p[1]-1,p[2]);nr.start_date=_dateToStr(a);nr.dow=a.getDay();nr.day=a.getDate();nr.month=a.getMonth();nr.year=a.getFullYear();}
   rendas.push(nr);
@@ -3348,8 +3376,8 @@ function renderBills(){
   const list=document.getElementById('billsList');list.innerHTML='';
   const _d0=_t0();
   const rec=bills.filter(b=>b.type!=='once'&&!b.metaId&&!_endedOn(b,_d0)).sort((a,b)=>{
-    const da=Number(a.day===99?31:a.day)||1;
-    const db=Number(b.day===99?31:b.day)||1;
+    const da=a.type==='yearly'?100+Number(a.month||0)*31+(Number(a.day===99?31:a.day)||1):(Number(a.day===99?31:a.day)||1);
+    const db=b.type==='yearly'?100+Number(b.month||0)*31+(Number(b.day===99?31:b.day)||1):(Number(b.day===99?31:b.day)||1);
     return da-db;
   });
   const uni=bills.filter(b=>b.type==='once').sort((a,b)=>new Date(a.year,a.month,a.day)-new Date(b.year,b.month,b.day));
@@ -3377,11 +3405,12 @@ function renderBills(){
 }
 function makeBillRow(b){
   const row=document.createElement('div');row.className='row';
-  const tm={monthly:['bm',t('type_monthly')],biweekly:['bm',t('type_biweekly')],weekly:['bw',t('type_weekly')],extra:['be',t('type_extra')],once:['bu',t('type_once')]};
+  const tm={monthly:['bm',t('type_monthly')],biweekly:['bm',t('type_biweekly')],weekly:['bw',t('type_weekly')],extra:['be',t('type_extra')],once:['bu',t('type_once')],yearly:['bu',t('type_yearly')]};
   const [bc,bl]=tm[b.type]||['bm',t('type_monthly')];
   let dn;
   if(b.type==='weekly') dn=`${t('dow_label')} ${DAYS_PT(Number(b.day))}`;
   else if(b.type==='biweekly'&&b.day2) dn=t('bills_days_two')(Number(b.day)===99?31:b.day,b.day2);
+  else if(b.type==='yearly') dn=t('yearly_every')(Number(b.day)===99?t('yearly_lastday'):b.day,(b.month==null||b.month==='')?'?':MS(Number(b.month)));
   else dn=Number(b.day)===99?(lang==='en'?'last day of month':'último dia'):`${t('day_label')} ${b.day}`;
   const dl=b.type==='once'?`${b.day}/${MS(b.month||4)}/${b.year||2026}`:(b.type==='weekly'?dn:(b.note||dn));
   const cat=CATS[b.cat||'outros'];
@@ -3423,8 +3452,8 @@ function openDayEditModal(itemType,id){
   const _saveBtn=document.getElementById('dayEditSaveBtn');
   if(_saveBtn)_saveBtn.textContent=t('dayedit_save');
   const typeOpts=itemType==='renda'
-    ?[['monthly',t('type_monthly')],['biweekly',t('type_biweekly')],['every2w',t('type_every2w')],['weekly',t('type_weekly')],['once',t('type_once')]]
-    :[['monthly',t('type_monthly')],['biweekly',t('type_biweekly')],['weekly',t('type_weekly')],['extra',t('type_extra')],['once',t('type_once')]];
+    ?[['monthly',t('type_monthly')],['biweekly',t('type_biweekly')],['every2w',t('type_every2w')],['weekly',t('type_weekly')],['yearly',t('type_yearly')],['once',t('type_once')]]
+    :[['monthly',t('type_monthly')],['biweekly',t('type_biweekly')],['weekly',t('type_weekly')],['extra',t('type_extra')],['yearly',t('type_yearly')],['once',t('type_once')]];
   const typeRow=`<div style="margin-bottom:14px"><label>${t('dayedit_freq')}</label>
     <select id="dei-type" onchange="onDayEditTypeChange('${itemType}','${id}',this.value)">
       ${typeOpts.map(([v,l])=>`<option value="${v}"${item.type===v?' selected':''}>${l}</option>`).join('')}
@@ -3462,6 +3491,13 @@ function _renderDayArea(type,item,isEN,itemType){
     const nx=(item.type==='every2w'&&item.start_date)?_e2wNext(item,new Date()):new Date();
     area.innerHTML=`<label>${t('renda_next_pay')}</label>
       <input id="dei0" type="date" value="${_dateToStr(nx)}">`;
+  } else if(type==='yearly'){
+    const mSel=(item.type==='yearly'&&item.month!=null&&item.month!=='')?Number(item.month):null; // trocar de outro tipo: mês sem pré-seleção
+    const dv=item.type==='yearly'?(Number(item.day)===99?31:(item.day||'')):'';
+    area.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div><label>${t('dayedit_month')}</label><select id="dei1"><option value="">${t('yearly_month_pick')}</option>${t('months_long').map((m,i)=>`<option value="${i}"${mSel===i?' selected':''}>${m}</option>`).join('')}</select></div>
+      <div><label>${t('dayedit_dom')}</label><input id="dei0" type="number" min="1" max="31" value="${dv}" inputmode="numeric"></div>
+    </div>`;
   } else if(type==='once'){
     const mo=String((item.month!=null?item.month+1:new Date().getMonth()+1)).padStart(2,'0');
     const dy=String(item.day||1).padStart(2,'0');
@@ -3486,6 +3522,8 @@ async function saveDayEdit(){
   if(type==='every2w'&&!/^\d{4}-\d{2}-\d{2}$/.test(v0.value)){_fieldBad(v0,t('renda_next_pay_req'));return;}
   if((type==='monthly'||type==='extra'||type==='biweekly')&&_validDay(v0.value)===null&&!(String(v0.value).trim()==='99'&&item.day===99)){_fieldBad(v0,t('field_err_day'));return;}
   if(type==='biweekly'){const v1=document.getElementById('dei1');if(v1&&String(v1.value).trim()!==''&&_validDay(v1.value)===null){_fieldBad(v1,t('field_err_day'));return;}}
+  if(type==='yearly'){const m1=document.getElementById('dei1');if(!m1||m1.value===''||isNaN(Number(m1.value))){_fieldBad(m1||v0,t('field_err_month'));return;}if(_validDay(v0.value)===null){_fieldBad(v0,t('field_err_day'));return;}}
+  const _was=item.type;
   item.type=type;
   if(type==='weekly'){
     const val=parseInt(v0.value);
@@ -3499,10 +3537,13 @@ async function saveDayEdit(){
   } else if(type==='every2w'){
     const p=v0.value.split('-').map(Number);
     _e2wAnchor(item,new Date(p[0],p[1]-1,p[2]));
+  } else if(type==='yearly'){
+    item.month=Number(document.getElementById('dei1').value);item.day=_validDay(v0.value);item.day2=null;if(itemType==='bill')item.year=null;else item.year=item.year||new Date().getFullYear(); // start_date não muda
   } else if(type==='once'){
     const pts=v0.value.split('-');
     if(pts.length===3){item.year=parseInt(pts[0]);item.month=parseInt(pts[1])-1;item.day=parseInt(pts[2]);}
   }
+  if(itemType==='bill'&&_was==='yearly'&&type!=='yearly'&&type!=='once'){item.month=null;item.year=null;}
   const catEl=document.getElementById('dei-cat');
   if(catEl&&itemType==='bill') item.cat=catEl.value;
   item.owner=window._editOwner||item.owner||'user';
@@ -3695,6 +3736,8 @@ async function addBill(){
   const day=type==='weekly'?(dowEl&&dowEl.value!==''?Number(dowEl.value):null):_validDay(dayEl.value);
   if(day===null){_fieldBad(type==='weekly'?dowEl:dayEl,t(type==='weekly'?'field_err_dow':'field_err_day'));return;}
   let day2=null;if(type==='biweekly'){day2=_validDay(day2El?day2El.value:'');if(day2===null){_fieldBad(day2El,t('field_err_day'));return;}if(day2===day)day2=null;} // 2x por mês: 2º dia obrigatório (igual à renda); igual ao 1º = 1 vez
+  const mEl=document.getElementById('f-month');
+  if(type==='yearly'&&(!mEl||mEl.value==null||mEl.value===''||isNaN(Number(mEl.value)))){_fieldBad(mEl,t('field_err_month'));return;}
   const dup=bills.some(b=>!b.metaId&&String(b.name||'').trim().toLowerCase()===name.toLowerCase()&&Number(b.val)===Number(val)&&!(b.end_date&&b.end_date<_dateToStr(new Date()))); // QA-048: duplicata só avisa
   const parts=rawMy.split('-').map(Number);
   const yr=parts[0]||new Date().getFullYear();
@@ -3702,8 +3745,9 @@ async function addBill(){
   const nb={id:newId(),name,val,day,day2,type,locked:false,cat,owner:window._billOwner||'user'};
   if(type==='once'){nb.month=mo-1;nb.year=yr;}
   else nb.start_date=_dateToStr(new Date());
+  if(type==='yearly'){nb.month=Number(mEl.value);nb.year=null;nb.start_date=new Date().getFullYear()+'-01-01';} // anual nova: vale desde 1º/jan deste ano
   bills.push(nb);
-  document.getElementById('f-name').value='';document.getElementById('f-val').value='';document.getElementById('f-day').value='';if(dowEl)dowEl.value='';if(day2El)day2El.value='';
+  document.getElementById('f-name').value='';document.getElementById('f-val').value='';document.getElementById('f-day').value='';if(dowEl)dowEl.value='';if(day2El)day2El.value='';if(mEl)mEl.value='';
   toggleForm('bills',false);
   renderBills();
   try{rebuild();}catch(e2){console.error('rebuild error after addBill:',e2);}
@@ -5766,7 +5810,7 @@ function _effOwner(x,metas,casado){
   return o==='conjuge'||o==='both'?o:'user';
 }
 // Valor mensal (mesma conta do _moEquiv): semanal ×52/12, a cada 2 semanas ×26/12, 2x/mês ×(2º dia?2:1), mensal ×1; conta 'extra' = mensal; únicas fora
-function _cpMonthly(x,kind){const v=Number(x.val)||0;if(x.type==='weekly')return v*52/12;if(x.type==='monthly')return v;if(kind==='bill')return x.type==='extra'?v:x.type==='biweekly'?v*(x.day2?2:1):0;return x.type==='every2w'?v*26/12:x.type==='biweekly'?v*(x.day2?2:1):0;}
+function _cpMonthly(x,kind){const v=Number(x.val)||0;if(x.type==='weekly')return v*52/12;if(x.type==='monthly')return v;if(kind==='bill')return x.type==='extra'?v:x.type==='biweekly'?v*(x.day2?2:1):x.type==='yearly'?v/12:0;return x.type==='every2w'?v*26/12:x.type==='biweekly'?v*(x.day2?2:1):0;}
 function _cpLive(x,ts){return !(x.end_date&&x.type!=='once'&&ts>x.end_date);}
 // Fatia de cada um no "Ambos" (% inteiro). Base: renda recorrente ativa por dono + renda 'both' meio a meio + únicas dos últimos 90 dias ÷ 3.
 // Ninguém com renda → 50/50; só um com renda → 100% de quem tem; quem tem renda fica com no mínimo 1%. Não casado → 100% do usuário.
@@ -7322,8 +7366,8 @@ async function gcalCreateEvents(type,token){
 // Segurança: o nome nunca entra no onclick (um nome com &#39; virava código). A linha é achada pelo id.
 function gcalRow(k,id){
   const x=(k==='renda'?rendas:bills).find(i=>String(i.id)===String(id));if(!x)return;
-  if(k==='renda')addToGoogleCal(x.name,x.val,x.type==='once'?x.day:x.day||1,x.type==='once'?x.month+1:0,x.type==='once'?x.year:0);
-  else addToGoogleCal(x.name,x.val,x.day||1,x.month!=null?x.month+1:0,x.year||0);
+  if(k==='renda')addToGoogleCal(x.name,x.val,Number(x.day)===99?28:(x.day||1),(x.type==='once'||x.type==='yearly')?((x.month==null||x.month==='')?0:Number(x.month)+1):0,x.type==='once'?x.year:0);
+  else addToGoogleCal(x.name,x.val,Number(x.day)===99?28:(x.day||1),x.month!=null?x.month+1:0,x.year||0);
 }
 function addToGoogleCal(name,val,day,month,year){
   const now=new Date();
@@ -7734,7 +7778,7 @@ function renderCalDayPanel(year,month,day){
     return;
   }
   const today=new Date();today.setHours(0,0,0,0);
-  const _lateLo=_mesLateLo(today,START),_balD=_mesBalD(); // E4: "Vencida" só para atrasada de verdade
+  const _lateLo=_mesLateLo(today,START),_lateLo60=_mesLateLo(today,START,60),_balD=_mesBalD(); // E4: "Vencida" só para atrasada de verdade
   const incHtml=incomeEvs.map(e=>`<div class="cal-pay-row">
     <div class="cal-pay-left">
       <span class="cal-pay-icon" style="color:var(--green)">↑</span>
@@ -7748,7 +7792,7 @@ function renderCalDayPanel(year,month,day){
     const paidDateStr=paidEntry&&paidEntry.paid_date?fmtDate(_metaEndDate(paidEntry.paid_date)):'';
     let icon,statusText,iconColor;
     if(paid){icon='✓';iconColor='var(--green)';statusText=`${t('cal_paid_on')} ${paidDateStr}`;}
-    else if(_mesIsLate(b,dateD,today,_lateLo,_balD)){icon='<svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>';iconColor='var(--amber)';statusText=t('cal_overdue');}
+    else if(_mesIsLate(b,dateD,today,_lateLo,_balD,_lateLo60)){icon='<svg class="ic" aria-hidden="true"><use href="#i-alert"/></svg>';iconColor='var(--amber)';statusText=t('cal_overdue');}
     else{icon='○';iconColor='var(--sub)';statusText='';}
     return `<div class="cal-pay-row">
       <div class="cal-pay-left">
@@ -8925,6 +8969,7 @@ const _AI_TYPES={rendas:['monthly','weekly','biweekly','every2w','once'],bills:[
 function _aiTypeLbl(k){const key='type_'+k,v=t(key);return v===key?k:String(v).toLowerCase();}
 // Dia vindo da IA: despesa semanal = 0 (domingo) a 6 (sábado); as outras = 1..31 ou 99 (último dia). Fora disso: null.
 function _aiDay(type,v){if(v==null||(typeof v==='string'&&v.trim()===''))return null;const n=Number(v);if(!Number.isInteger(n))return null;return type==='weekly'?(n>=0&&n<=6?n:null):((n>=1&&n<=31)||n===99?n:null);}
+function _aiIsYearly(v){return /^(year|annual|anual)/.test(String(v||'').trim().toLowerCase());} // Anual: o Fredy não cria nem troca para anual (manda para o formulário)
 function _aiOwner(o){const v=String(o||'').trim().toLowerCase();return v==='conjuge'?'conjuge':(v==='both'||v==='ambos')?'both':'user';}
 // every2w vindo da IA: usa start_date se veio válido; senão o próximo dia da semana 'dow' a partir de hoje
 function _aiE2wNext(d,dow){
@@ -8942,6 +8987,7 @@ async function _aiDoActions(actions){
     const d=a.data||{};
     ['name','note','descricao'].forEach(k=>{if(d[k]!=null)d[k]=String(d[k]).replace(/[\u0000-\u001f]/g,' ').trim().slice(0,k==='name'?60:200);});
     const where=a.where||{};
+    if((tbl==='rendas'||tbl==='bills')&&op!=='delete'&&_aiIsYearly(d.type)){results.push(t('ai_yearly_form'));continue;}
     try{
       if(op==='delete'||op==='update'){
         const list={rendas,bills,metas,dividas}[tbl];
@@ -9100,8 +9146,8 @@ function _aiSystemPrompt(){
   const cpl=window._profile?.estado_civil==='casado'; // Casal C1: dono dos itens e divisão do "Ambos" só para casado
   const snap={
     ...(cal?{calendar:cal}:{}),
-    rendas: rendas.map(r=>({name:r.name,val:r.val,type:r.type,day:r.day,...(cpl?{owner:_effOwner(r,metas,true)}:{}),...(r.type==='every2w'?{dow:r.dow,start_date:r.start_date}:{}),...(r.type!=='once'&&r.end_date?{end_date:r.end_date,...(_endedOn(r,new Date())?{ended:true}:{})}:{})})),
-    bills: bills.filter(b=>!b.metaId).map(b=>({name:b.name,val:b.val,type:b.type,cat:b.cat,day:b.day,...(b.type==='biweekly'?{day2:b.day2??null}:{}),...(cpl?{owner:_effOwner(b,metas,true)}:{}),...(_billPausedOn(b,new Date())?{paused_until:b.pause_until}:{}),...(b.type!=='once'&&b.end_date?{end_date:b.end_date,...(_endedOn(b,new Date())?{ended:true}:{})}:{})})),
+    rendas: rendas.map(r=>({name:r.name,val:r.val,type:r.type,day:r.day,...(cpl?{owner:_effOwner(r,metas,true)}:{}),...(r.type==='every2w'?{dow:r.dow,start_date:r.start_date}:{}),...(r.type==='yearly'?{month:r.month!=null&&r.month!==''?Number(r.month)+1:null}:{}),...(r.type!=='once'&&r.end_date?{end_date:r.end_date,...(_endedOn(r,new Date())?{ended:true}:{})}:{})})),
+    bills: bills.filter(b=>!b.metaId).map(b=>({name:b.name,val:b.val,type:b.type,cat:b.cat,day:b.day,...(b.type==='biweekly'?{day2:b.day2??null}:{}),...(b.type==='yearly'?{month:b.month!=null&&b.month!==''?Number(b.month)+1:null}:{}),...(cpl?{owner:_effOwner(b,metas,true)}:{}),...(_billPausedOn(b,new Date())?{paused_until:b.pause_until}:{}),...(b.type!=='once'&&b.end_date?{end_date:b.end_date,...(_endedOn(b,new Date())?{ended:true}:{})}:{})})),
     metas: metas.map(m=>{const mb=m.billId?bills.find(x=>x.id===m.billId):null;return {name:m.name,val:m.val,done:m.done,...(cpl?{owner:_effOwner(m,metas,true)}:{}),saved:_metaSaved(m),per_week:m.needPerWeek||null,target:`${m.year}-${String(m.month+1).padStart(2,'0')}-${String(m.day||28).padStart(2,'0')}`,...(mb&&_billPausedOn(mb,new Date())?{paused_until:mb.pause_until}:{})};}),
     dividas: dividas.map(d=>({name:d.name,total:d.total,remaining:d.remaining,juros:d.juros,...(cpl?{owner:_effOwner(d,metas,true)}:{})})),
   };
@@ -9168,6 +9214,7 @@ RULES:
 - To stop a recurring income or bill, use op "delete": the app keeps its history and only stops it. If it has a payday/due date today, first ask whether today's one already came in / was paid, then send data.end_date ("YYYY-MM-DD", the last day it still counts: today if yes, otherwise the last one before today; at most ~2 months back). One-time items are really deleted. Locked items can't be changed.
 - cat inference: Netflix/Spotify/streaming→assinaturas, aluguel/rent→moradia, food/comida→alimentacao, gym/academia→saude, car/carro→transporte, viagem/travel→viagem.
 - Default day:1 for monthly if not specified. Default meta year to ${yr+1}.
+- type "yearly" (rendas/bills) = once a year on month (1-12) and day. You cannot create yearly items or change an item to yearly: never send type "yearly" and never register a yearly amount as monthly, weekly or once; tell the user to add it in the form, choosing the type Yearly ("Anual"). A yearly income is not in home_separe; a yearly bill is in home_separe only when its date falls inside the window.
 - If asked to delete/update something not in the data, explain it wasn't found.
 - owner field: if the user talks about themselves or "my" income/expense → owner="user". If they talk about their partner (wife, husband, spouse, or another person by name) → owner="conjuge". Never use a person's name as the income/expense title — use a descriptive name (e.g. "Salário", "Freelance") instead.${coupleRule}
 
